@@ -47,5 +47,4 @@ file_id = fopen(o_path);
 o_data = fread(file_id, [512, 108900], 'float');
 o_time = dlmread(o_time_path);
 
-o_plot = subplot(3, 1, 3);
-plot(o_plot, o_data);
+image(o_data);
