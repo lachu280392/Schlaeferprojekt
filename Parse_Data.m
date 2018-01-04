@@ -1,7 +1,7 @@
 %% Path to data
 
-folder_path = '/media/yuria/STIIIIICK/';
-file = 'p2m3';
+folder_path = '';
+file = 'p1m1';
 
 %% Read data
 
@@ -12,7 +12,7 @@ else
 end
 
 if new_file
-    disp(strcat('new file: ', file));
+    disp(strcat('New file: ', file));
     % Force
     f_path = strcat(folder_path, 'forces/', file, '.txt');
     f_data = dlmread(f_path);
@@ -33,19 +33,16 @@ if new_file
             o_start = time.Var3(i);
         end
     end
+    % Remove offset
+    f_z = f_z(f_start:end);
+    f_time = f_time(f_start:end);
+    o_data = o_data(:, o_start:end);
+    o_time = o_time(o_start:end);
 end
 
 %% Tidy up data
 
 % Forces
-
-% Remove offset
-f_z = f_z(f_start:end);
-
-% OCT
-
-% Remove offset
-o_data = o_data(:, o_start:end);
 
 % Maximal values
 [o_pks, o_locs] = max(o_data);
@@ -88,5 +85,5 @@ title('OCT');
 %% Clear
 
 clear o_pks_flip o_locs_flip axis_max_flip axis_min_flip;
-clear axis_max axis_min f_path f_z_plot file_id folder_path o_data_flip o_max_plot o_locs_smooth;
+clear axis_max axis_min f_z_plot file_id folder_path o_data_flip o_max_plot o_locs_smooth;
 clear o_path o_time_path;
