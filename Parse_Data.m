@@ -76,7 +76,8 @@ ylabel('OCT Depth');
 %% PLOT 2
 
 % Flip 
-[~, o_locs_flip] = max(flipud(o_data));
+o_data_flip = flipud(o_data);
+[~, o_locs_flip] = max(o_data_flip);
 axis_max_flip = o_locs_flip(1) + 70;
 axis_min_flip = o_locs_flip(1) - 70;
 
