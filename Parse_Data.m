@@ -1,7 +1,7 @@
 %% Path to data
 
-folder_path = '/media/yuria/STIIIIICK/';
-file = 'p2m3';
+folder_path = '';
+file = 'p1m1';
 
 %% Read data
 
@@ -26,11 +26,17 @@ if new_file
     o_data = fread(file_id, [512, 108900], 'float');
     o_time = dlmread(o_time_path);
     
-    time = readtable('timestamps.txt', 'Format', '%s%u%u');
+    time = readtable('timestamps.txt', 'Format', '%s%u%u%u');
     for i=1:9
         if strcmp(time.Var1(i), file)
             f_start = time.Var2(i);
-            o_start = time.Var3(i);
+			f_end = time.Var3(i);
+			f_number_of_samples = f_end - f_start;
+			f_sampling_frequency = 10^6 * size(f_time, 1) / (f_time(end) - f_time(1));
+            o_start = time.Var4(i);
+			o_sampling_frequency = 100 * size(o_time, 1) / (o_time(end) - o_time(1));
+			o_number_of_samples = round(f_number_of_samples * o_sampling_frequency / f_sampling_frequency);
+			o_end = o_start + o_number_of_samples;
         end
     end
 end
@@ -40,12 +46,12 @@ end
 % Forces
 
 % Remove offset
-f_z = f_z(f_start:end);
+f_z = f_z(f_start:f_end);
 
 % OCT
 
 % Remove offset
-o_data = o_data(:, o_start:end);
+o_data = o_data(:, o_start:o_end);
 
 % Maximal values
 [o_pks, o_locs] = max(o_data);
