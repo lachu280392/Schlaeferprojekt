@@ -89,10 +89,12 @@ for p = 1:3
         o_data_final = strcat(file, '_oct.bin');
         t_final = strcat(file, '_timestamp.bin');
 
+        cd forces/;
         f_fileID = fopen(f_data_final, 'w');
         fwrite(f_fileID, f_z, 'float');
         fclose(f_fileID);
 
+        cd ../oct/;
         o_fileID = fopen(o_data_final, 'w');
         fwrite(o_fileID, o_data, 'float');
         fclose(o_fileID);
@@ -101,6 +103,7 @@ for p = 1:3
         t_fileID = fopen(t_final, 'w');
         fwrite(t_fileID, timestamp, 'float');
         fclose(t_fileID);
+        cd ..;
         %% Clear
 
         clear o_pks_flip o_locs_flip axis_max_flip axis_min_flip;
