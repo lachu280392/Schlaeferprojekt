@@ -57,28 +57,28 @@ for j=1:o_size(2)
     o_var(j) = var(o_data(:,j));
 end
 
-%% PLOT 1
+%% Plot 1
 
 figure;
 
-f_x_plot = subplot(3,1,1);
-plot(f_x_plot, f_time, f_x);
+subplot(3,1,1);
+plot(f_x);
 title('Force Sensor Data');
 xlabel('Time');
 ylabel('Force X');
 
-f_z_plot = subplot(3, 1, 2);
-plot(f_z_plot, f_time, f_z);
+subplot(3, 1, 2);
+plot(f_z);
 xlabel('Time');
 ylabel('Force Z');
 
-o_max_plot = subplot(3, 1, 3);
-plot(o_locs_smooth);
+subplot(3, 1, 3);
+plot(o_locs);
 axis([0 12*10^4 axis_min axis_max]);
 xlabel('Time');
 ylabel('OCT Depth');
 
-%% PLOT 2
+%% Plot 2
 
 % Flip 
 o_data_flip = flipud(o_data);
@@ -89,7 +89,7 @@ axis_min_flip = o_locs_flip(1) - 70;
 figure;
 
 subplot(2,1,1);
-plot(f_time, f_z);
+plot(f_z);
 xlabel('Time');
 ylabel('Force Z');
 title('Force Sensor');
@@ -102,6 +102,8 @@ axis([0 12*10^4 axis_min_flip axis_max_flip]);
 xlabel('Time');
 ylabel('Intensity');
 title('OCT');
+
+%% Clear
 
 clear o_pks_flip o_locs_flip axis_max_flip axis_min_flip;
 clear axis_max axis_min f_path f_x_plot f_z_plot file_id folder_path o_data_flip o_max_plot o_locs_smooth;
