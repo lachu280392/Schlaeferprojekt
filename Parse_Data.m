@@ -16,7 +16,7 @@ if new_file
     % Force
     f_path = strcat(folder_path, 'forces/', file, '.txt');
     f_data = dlmread(f_path);
-    f_time = f_data(:,1) - f_data(1,1);     % offset removed
+    f_time = f_data(:,1);
     f_z = f_data(:, 4);
     f_x = f_data(:, 2);
 
@@ -44,13 +44,18 @@ f_x = f_x - mean(f_x);
 
 % OCT
 
-% Remove offset
-o_time = o_time - o_time(1);
 % Maximal values
 [o_pks, o_locs] = max(o_data);
 o_locs_smooth = smooth(o_locs);
 axis_max = o_locs(1) + 70;
 axis_min = o_locs(1) - 70;
+
+% OCT variance to define when noise gets larger 
+% Hoping that this is the point, where the needle touches the gelatine
+o_size = size(o_data);
+for j=1:o_size(2)
+    o_var(j) = var(o_data(:,j));
+end
 
 %% PLOT 1
 
