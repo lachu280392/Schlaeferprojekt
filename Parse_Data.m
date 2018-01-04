@@ -43,9 +43,7 @@ for p = 1:1
             end
             % Remove offset
             f_z = f_z(f_start:f_end);
-            f_time = f_time(f_start:f_end);
             o_data = o_data(:, o_start:o_end);
-            o_time = o_time(o_start:round(o_end / 100));
         end
 
         %% Tidy up data
