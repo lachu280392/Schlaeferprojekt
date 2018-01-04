@@ -1,7 +1,7 @@
 %% Path to data
 
-folder_path = '';
-file = 'p1m1';
+folder_path = '/media/yuria/STIIIIICK/';
+file = 'p2m3';
 
 %% Read data
 
@@ -18,7 +18,6 @@ if new_file
     f_data = dlmread(f_path);
     f_time = f_data(:,1);
     f_z = f_data(:, 4);
-    f_x = f_data(:, 2);
 
     % OCT
     o_path = strcat(folder_path, 'oct/', file, '.bin');
@@ -26,6 +25,14 @@ if new_file
     file_id = fopen(o_path);
     o_data = fread(file_id, [512, 108900], 'float');
     o_time = dlmread(o_time_path);
+    
+    time = readtable('timestamps.txt', 'Format', '%s%u%u');
+    for i=1:9
+        if strcmp(time.Var1(i), file)
+            f_start = time.Var2(i);
+            o_start = time.Var3(i);
+        end
+    end
 end
 
 %% Tidy up data
@@ -33,16 +40,12 @@ end
 % Forces
 
 % Remove offset
-f_x = f_x - mean(f_x);
-% Find value, location, and width of peaks
-%[f_pks, f_locs, f_wds] = findpeaks(f_x,...
-%                             'MinPeakHeight', 0.5,...
-%                             'MinPeakDistance', 100);
-
-% Time real measurement starts
-%f_start = f_locs(end) + f_wds(end)/2;
+f_z = f_z(f_start:end);
 
 % OCT
+
+% Remove offset
+o_data = o_data(:, o_start:end);
 
 % Maximal values
 [o_pks, o_locs] = max(o_data);
@@ -56,27 +59,6 @@ o_size = size(o_data);
 for j=1:o_size(2)
     o_var(j) = var(o_data(:,j));
 end
-
-%% Plot 1
-
-figure;
-
-subplot(3,1,1);
-plot(f_x);
-title('Force Sensor Data');
-xlabel('Time');
-ylabel('Force X');
-
-subplot(3, 1, 2);
-plot(f_z);
-xlabel('Time');
-ylabel('Force Z');
-
-subplot(3, 1, 3);
-plot(o_locs);
-axis([0 12*10^4 axis_min axis_max]);
-xlabel('Time');
-ylabel('OCT Depth');
 
 %% Plot 2
 
@@ -106,5 +88,5 @@ title('OCT');
 %% Clear
 
 clear o_pks_flip o_locs_flip axis_max_flip axis_min_flip;
-clear axis_max axis_min f_path f_x_plot f_z_plot file_id folder_path o_data_flip o_max_plot o_locs_smooth;
+clear axis_max axis_min f_path f_z_plot file_id folder_path o_data_flip o_max_plot o_locs_smooth;
 clear o_path o_time_path;
