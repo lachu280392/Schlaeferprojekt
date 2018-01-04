@@ -85,9 +85,9 @@ for p = 1:3
         title('OCT');
 
         %% Write into file
-        f_data_final = strcat('/forces/', file, '_force_z.bin');
-        o_data_final = strcat('/oct/', file, '_oct.bin');
-        t_final = strcat('/oct/', file, '_timestamp.bin');
+        f_data_final = strcat(file, '_force_z.bin');
+        o_data_final = strcat(file, '_oct.bin');
+        t_final = strcat(file, '_timestamp.bin');
 
         f_fileID = fopen(f_data_final, 'w');
         fwrite(f_fileID, f_z, 'float');
@@ -97,6 +97,7 @@ for p = 1:3
         fwrite(o_fileID, o_data, 'float');
         fclose(o_fileID);
 
+        timestamp = [1, 2, 3];
         t_fileID = fopen(t_final, 'w');
         fwrite(t_fileID, timestamp, 'float');
         fclose(t_fileID);
