@@ -56,13 +56,6 @@ for p = 1:1
         axis_max = o_locs(1) + 70;
         axis_min = o_locs(1) - 70;
 
-        % OCT variance to define when noise gets larger 
-        % Hoping that this is the point, where the needle touches the gelatine
-        o_size = size(o_data);
-        for j=1:o_size(2)
-            o_var(j) = var(o_data(:,j));
-        end
-
         %% Plot 2
 
         % Flip 
