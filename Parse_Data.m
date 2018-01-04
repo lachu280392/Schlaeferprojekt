@@ -1,28 +1,61 @@
 %% Path to data
 
 folder_path = '';
-%% FORCES
+file = 'p1m1';
 
-% Get data
-f_path = strcat(folder_path, 'forces/p1m1.txt');
-f_data = dlmread(f_path);
-f_time = f_data(:,1) - f_data(1,1);     % offset removed
-f_z = f_data(:, 4);
-f_x = f_data(:, 2);
+%% Read data
+
+if exist('f_path','var')
+    new_file = contains(f_path, file) == 0;
+else 
+    new_file = 1;
+end
+
+if new_file
+    disp(strcat('new file: ', file));
+    % Force
+    f_path = strcat(folder_path, 'forces/', file, '.txt');
+    f_data = dlmread(f_path);
+    f_time = f_data(:,1) - f_data(1,1);     % offset removed
+    f_z = f_data(:, 4);
+    f_x = f_data(:, 2);
+
+    % OCT
+    o_path = strcat(folder_path, 'oct/', file, '.bin');
+    o_time_path = strcat(folder_path, 'oct/', file, '_timestamp.txt');
+    file_id = fopen(o_path);
+    o_data = fread(file_id, [512, 108900], 'float');
+    o_time = dlmread(o_time_path);
+end
+
+%% Tidy up data
+
+% Forces
 
 % Remove offset
 f_x = f_x - mean(f_x);
-
 % Find value, location, and width of peaks
-[f_pks, f_locs, f_wds] = findpeaks(f_x,...
-                            'MinPeakHeight', 0.5,...
-                            'MinPeakDistance', 100);
+%[f_pks, f_locs, f_wds] = findpeaks(f_x,...
+%                             'MinPeakHeight', 0.5,...
+%                             'MinPeakDistance', 100);
 
 % Time real measurement starts
-f_start = f_locs(end) + f_wds(end)/2;
-                       
-% Plots
+%f_start = f_locs(end) + f_wds(end)/2;
+
+% OCT
+
+% Remove offset
+o_time = o_time - o_time(1);
+% Maximal values
+[o_pks, o_locs] = max(o_data);
+o_locs_smooth = smooth(o_locs);
+axis_max = o_locs(1) + 70;
+axis_min = o_locs(1) - 70;
+
+%% PLOT 1
+
 figure;
+
 f_x_plot = subplot(3,1,1);
 plot(f_x_plot, f_time, f_x);
 title('Force Sensor Data');
@@ -34,44 +67,34 @@ plot(f_z_plot, f_time, f_z);
 xlabel('Time');
 ylabel('Force Z');
 
-clear file_forces, f_path;
-
-%% OCT
-
-o_path = strcat(folder_path, 'oct/p1m1.bin');
-o_time_path = strcat(folder_path, 'oct/p1m1_timestamp.txt');
-file_id = fopen(o_path);
-o_data = fread(file_id, [512, 108900], 'float');
-o_time = dlmread(o_time_path);
-o_time = o_time - o_time(1);            % remove offset
-
-% Plot of maximal values
-[o_pks, o_locs] = max(o_data);
-o_locs_smooth = smooth(o_locs);
 o_max_plot = subplot(3, 1, 3);
 plot(o_locs_smooth);
-axis([0 12*10^4 50 150]);
+axis([0 12*10^4 axis_min axis_max]);
 xlabel('Time');
 ylabel('OCT Depth');
 
-%% COMPARE BOTH DATA
+%% PLOT 2
 
-% Image 
+% Flip 
+[~, o_locs_flip] = max(flipud(o_data));
+axis_max_flip = o_locs_flip(1) + 70;
+axis_min_flip = o_locs_flip(1) - 70;
+
 figure;
+
 subplot(2,1,1);
 plot(f_time, f_z);
+xlabel('Time');
+ylabel('Force Z');
+title('Force Sensor');
+
 subplot(2,1,2);
-image(o_data);
+image(o_data_flip);
 hold on;
-plot(o_locs_smooth, '.r');
-axis([0 12*10^4 50 150]);
+plot(smooth(o_locs_flip), '.r');
+axis([0 12*10^4 axis_min_flip axis_max_flip]);
+xlabel('Time');
+ylabel('Intensity');
+title('OCT');
 
-% OCT variance to define when noise gets larger 
-% Hoping that this is the point, where the needle touches the gelatine
-o_size = size(o_data);
-for j=1:o_size(2)
-    o_var(j) = var(o_data(:,j));
-end
-
-% Force time of touch must be calculated by the change of value 
-% This would be the cut off after manual movement in x-direction
+clear o_pks_flip o_locs_flip axis_max_flip axis_min_flip;
