@@ -19,7 +19,7 @@ for p = 1:1
             f_path = strcat(folder_path, 'forces/', file, '.txt');
             f_data = dlmread(f_path);
             f_time = f_data(:,1);
-            f_z = f_data(:, 4);
+            f_data = f_data(:, 4);
 
             % OCT
             o_path = strcat(folder_path, 'oct/', file, '.bin');
@@ -42,7 +42,7 @@ for p = 1:1
                 end
             end
             % Remove offset
-            f_z = f_z(f_start:f_end);
+            f_data = f_z(f_start:f_end);
             o_data = o_data(:, o_start:o_end);
         end
 
@@ -65,7 +65,7 @@ for p = 1:1
         figure;
 
         subplot(2,1,1);
-        plot(f_z);
+        plot(f_data);
         xlabel('Time');
         ylabel('Force Z');
         title('Force Sensor');
@@ -86,7 +86,7 @@ for p = 1:1
 
         cd forces/;
         f_fileID = fopen(f_data_final, 'w');
-        fwrite(f_fileID, f_z, 'float');
+        fwrite(f_fileID, f_data, 'float');
         fclose(f_fileID);
 
         cd ../oct/;
@@ -102,7 +102,7 @@ for p = 1:1
         %% Clear
 
         clear o_pks_flip o_locs_flip axis_max_flip axis_min_flip;
-        clear axis_max axis_min f_z_plot file_id folder_path o_data_flip o_max_plot o_locs_smooth;
+        clear axis_max axis_min f_data_plot file_id folder_path o_data_flip o_max_plot o_locs_smooth;
         clear o_path o_time_path;
     end;
 end;
