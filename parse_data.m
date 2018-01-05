@@ -33,17 +33,21 @@ for p = 1:1
                 if strcmp(time.Var1(i), file)
         		    f_start = time.Var2(i);
 					f_end = time.Var3(i);
-					f_number_of_samples = f_end - f_start;
+					f_number_of_samples = f_end - f_start + 1;
 					f_sampling_frequency = 10^6 * size(f_time, 1) / (f_time(end) - f_time(1));
         		    o_start = time.Var4(i);
 					o_sampling_frequency = 100 * size(o_time, 1) / (o_time(end) - o_time(1));
 					o_number_of_samples = round(f_number_of_samples * o_sampling_frequency / f_sampling_frequency);
-					o_end = o_start + o_number_of_samples;
+					o_end = o_start + o_number_of_samples - 1;
                 end
             end
             % Remove offset
-            f_data = f_z(f_start:f_end);
+            f_data = f_data(f_start:f_end);
             o_data = o_data(:, o_start:o_end);
+
+			% Interpolate
+			upsampling = double(f_number_of_samples) / double(o_number_of_samples);
+			f_data = interp1(1:double(f_number_of_samples), f_data', 1:upsampling:double(f_number_of_samples));
         end
 
         %% Tidy up data
