@@ -47,6 +47,7 @@ for p = 1:1
             o_data = o_data(:, o_start:o_end);
 
 			% Interpolate
+			f_data = smooth(f_data, 317);
 			f_data = interp1(1:double(f_number_of_samples), f_data', linspace(1, double(f_number_of_samples), double(o_number_of_samples)));
         end
 
