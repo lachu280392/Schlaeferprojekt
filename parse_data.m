@@ -46,8 +46,7 @@ for p = 1:1
             o_data = o_data(:, o_start:o_end);
 
 			% Interpolate
-			upsampling = double(f_number_of_samples) / double(o_number_of_samples);
-			f_data = interp1(1:double(f_number_of_samples), f_data', 1:upsampling:double(f_number_of_samples));
+			f_data = interp1(1:double(f_number_of_samples), f_data', linspace(1, double(f_number_of_samples), double(o_number_of_samples)));
         end
 
         %% Tidy up data
