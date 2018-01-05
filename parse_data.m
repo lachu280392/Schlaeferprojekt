@@ -70,6 +70,7 @@ for p = 1:1
 
         subplot(2,1,1);
         plot(f_data);
+		xlim([0 size(f_data, 2)]);
         xlabel('Time');
         ylabel('Force Z');
         title('Force Sensor');
@@ -78,9 +79,9 @@ for p = 1:1
         image(o_data_flip);
         hold on;
         plot(smooth(o_locs_flip), '.r');
-        axis([0 12*10^4 axis_min_flip axis_max_flip]);
+        axis([0 size(o_data, 2) axis_min_flip axis_max_flip]);
         xlabel('Time');
-        ylabel('Intensity');
+        ylabel('Depth');
         title('OCT');
 
         %% Write into file
