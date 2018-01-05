@@ -18,16 +18,17 @@ for p = 1:1
             % Force
             f_path = strcat(folder_path, 'forces/', file, '.txt');
             f_data = dlmread(f_path);
-            f_time = f_data(:,1);
+            f_time = f_data(:, 1);
             f_data = f_data(:, 4);
 
             % OCT
             o_path = strcat(folder_path, 'oct/', file, '.bin');
             o_time_path = strcat(folder_path, 'oct/', file, '_timestamp.txt');
-            file_id = fopen(o_path);
-            o_data = fread(file_id, [512, 108900], 'float');
+            o_file_id = fopen(o_path);
+            o_data = fread(o_file_id, [512, 108900], 'float');
             o_time = dlmread(o_time_path);
 
+			% timestamps for start and end of force measurement as well as start of oct measurement (end of oct measurement is calculated)
             time = readtable('timestamps.txt', 'Format', '%s%u%u%u');
             for i=1:9
                 if strcmp(time.Var1(i), file)
@@ -51,13 +52,13 @@ for p = 1:1
 
         %% Tidy up data
 
-        % Maximal values
+        % Maximum values
         [o_pks, o_locs] = max(o_data);
         o_locs_smooth = smooth(o_locs);
         axis_max = o_locs(1) + 70;
         axis_min = o_locs(1) - 70;
 
-        %% Plot 2
+        %% Plot
 
         % Flip 
         o_data_flip = flipud(o_data);
@@ -69,7 +70,7 @@ for p = 1:1
 
         subplot(2,1,1);
         plot(f_data);
-		xlim([0 size(f_data, 2)]);
+		xlim([0, size(f_data, 2)]);
         xlabel('Time');
         ylabel('Force Z');
         title('Force Sensor');
@@ -78,7 +79,7 @@ for p = 1:1
         image(o_data_flip);
         hold on;
         plot(smooth(o_locs_flip), '.r');
-        axis([0 size(o_data, 2) axis_min_flip axis_max_flip]);
+        axis([0, size(o_data, 2), axis_min_flip, axis_max_flip]);
         xlabel('Time');
         ylabel('Depth');
         title('OCT');
@@ -103,8 +104,8 @@ for p = 1:1
         fwrite(t_fileID, timestamp, 'float');
         fclose(t_fileID);
         cd ..;
-        %% Clear
 
+        %% Clear
         clear o_pks_flip o_locs_flip axis_max_flip axis_min_flip;
         clear axis_max axis_min f_data_plot file_id folder_path o_data_flip o_max_plot o_locs_smooth;
         clear o_path o_time_path;
