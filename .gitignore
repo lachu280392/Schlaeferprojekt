@@ -1,3 +1,4 @@
-forces/
-oct/
+measured_data/
+preprocessed_data/
 *.m~
+*.swp
