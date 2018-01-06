@@ -5,51 +5,44 @@ measured_data_path = 'measured_data/';
 for p = 1:1
     for m = 1:1
         file = strcat('p', num2str(p), 'm', num2str(m));
+        disp(file);
 
         %% Read data
-        if exist('f_path','var')
-            new_file = contains(f_path, file) == 0;
-        else 
-            new_file = 1;
-        end
+        % Force
+        f_path = strcat(measured_data_path, 'forces/', file, '.txt');
+        f_data = dlmread(f_path);
+        f_time = f_data(:, 1);
+        f_data = f_data(:, 4);
 
-        if new_file
-            disp(strcat('New file: ', file));
-            % Force
-            f_path = strcat(measured_data_path, 'forces/', file, '.txt');
-            f_data = dlmread(f_path);
-            f_time = f_data(:, 1);
-            f_data = f_data(:, 4);
+        % OCT
+        o_path = strcat(measured_data_path, 'oct/', file, '.bin');
+        o_time_path = strcat(measured_data_path, 'oct/', file, '_timestamp.txt');
+        o_file_id = fopen(o_path);
+        o_data = fread(o_file_id, [512, Inf], 'float');
+        o_time = dlmread(o_time_path);
 
-            % OCT
-            o_path = strcat(measured_data_path, 'oct/', file, '.bin');
-            o_time_path = strcat(measured_data_path, 'oct/', file, '_timestamp.txt');
-            o_file_id = fopen(o_path);
-            o_data = fread(o_file_id, [512, Inf], 'float');
-            o_time = dlmread(o_time_path);
-
-			% timestamps for start and end of force measurement as well as start of oct measurement (end of oct measurement is calculated)
-            time = readtable('timestamps.txt', 'Format', '%s%u%u%u');
-            for i=1:9
-                if strcmp(time.Var1(i), file)
-        		    f_start = time.Var2(i);
-					f_end = time.Var3(i);
-					f_number_of_samples = f_end - f_start + 1;
-					f_sampling_frequency = 10^6 * size(f_time, 1) / (f_time(end) - f_time(1));
-        		    o_start = time.Var4(i);
-					o_sampling_frequency = 100 * size(o_time, 1) / (o_time(end) - o_time(1));
-					o_number_of_samples = round(f_number_of_samples * o_sampling_frequency / f_sampling_frequency);
-					o_end = o_start + o_number_of_samples - 1;
-                end
+		% timestamps for start and end of force measurement as well as start of oct measurement (end of oct measurement is calculated)
+        time = readtable('timestamps.txt', 'Format', '%s%u%u%u');
+        for i=1:9
+            if strcmp(time.Var1(i), file)
+        	    f_start = time.Var2(i);
+				f_end = time.Var3(i);
+				f_number_of_samples = f_end - f_start + 1;
+				f_sampling_frequency = 10^6 * size(f_time, 1) / (f_time(end) - f_time(1));
+        	    o_start = time.Var4(i);
+				o_sampling_frequency = 100 * size(o_time, 1) / (o_time(end) - o_time(1));
+				o_number_of_samples = round(f_number_of_samples * o_sampling_frequency / f_sampling_frequency);
+				o_end = o_start + o_number_of_samples - 1;
             end
-            % Remove offset
-            f_data = f_data(f_start:f_end);
-            o_data = o_data(:, o_start:o_end);
-
-			% Interpolate
-			f_data = smooth(f_data, 317);
-			f_data = interp1(1:double(f_number_of_samples), f_data', linspace(1, double(f_number_of_samples), double(o_number_of_samples)));
         end
+
+        % Remove offset
+        f_data = f_data(f_start:f_end);
+        o_data = o_data(:, o_start:o_end);
+
+		% smooth and interpolate
+		f_data = smooth(f_data, 317);
+		f_data = interp1(1:double(f_number_of_samples), f_data', linspace(1, double(f_number_of_samples), double(o_number_of_samples)));
 
         %% Tidy up data
 
@@ -103,10 +96,14 @@ for p = 1:1
         fclose(t_file_id);
         cd ..;
 		cd ..;
-
-        %% Clear
-        clear o_pks_flip o_locs_flip axis_max_flip axis_min_flip;
-        clear axis_max axis_min f_data_plot file_id measured_data_path o_data_flip o_max_plot o_locs_smooth;
-        clear o_path o_time_path;
     end;
 end;
+
+%% Clear
+clear f_file_id f_end f_path f_start f_time;
+clear o_end o_file_id o_start o_time t_file_id;
+clear p i m;
+clear file
+clear o_pks_flip o_locs_flip axis_max_flip axis_min_flip o_locs o_pks;
+clear axis_max axis_min f_data_plot file_id measured_data_path o_data_flip o_max_plot o_locs_smooth;
+clear o_path o_time_path;
