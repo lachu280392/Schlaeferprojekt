@@ -22,7 +22,7 @@ for p = 1:1
         o_time = dlmread(o_time_path);
 
 		% timestamps for start and end of force measurement as well as start of oct measurement (end of oct measurement is calculated)
-        time = readtable('timestamps.txt', 'Format', '%s%u%u%u');
+        time = readtable('data/timestamps.txt', 'Format', '%s%u%u%u');
         for i=1:9
             if strcmp(time.Var1(i), file)
         	    f_start = time.Var2(i);
