@@ -1,4 +1,3 @@
-measured_data/
-preprocessed_data/
+data/
 *.m~
 *.swp
