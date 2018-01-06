@@ -1,6 +1,6 @@
 %% Path to data
 
-measured_data_path = 'measured_data/';
+measured_data_path = 'data/measured_data/';
 
 for p = 1:1
     for m = 1:1
@@ -79,7 +79,7 @@ for p = 1:1
         title('OCT');
 
         %% Write into file
-        cd preprocessed_data/forces/;
+        cd data/preprocessed_data/forces/;
         f_file_id = fopen(strcat(file, '_forces.bin'), 'w');
         fwrite(f_file_id, f_data, 'float');
         fclose(f_file_id);
@@ -95,6 +95,7 @@ for p = 1:1
         fwrite(t_file_id, time, 'float');
         fclose(t_file_id);
         cd ..;
+		cd ..;
 		cd ..;
     end;
 end;
