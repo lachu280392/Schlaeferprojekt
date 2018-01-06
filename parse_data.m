@@ -108,3 +108,4 @@ clear file
 clear o_pks_flip o_locs_flip axis_max_flip axis_min_flip o_locs o_pks;
 clear axis_max axis_min f_data_plot file_id measured_data_path o_data_flip o_max_plot o_locs_smooth;
 clear o_path o_time_path;
+clear all;
