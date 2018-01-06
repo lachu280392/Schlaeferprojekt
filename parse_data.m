@@ -25,7 +25,7 @@ for p = 1:1
             o_path = strcat(folder_path, 'oct/', file, '.bin');
             o_time_path = strcat(folder_path, 'oct/', file, '_timestamp.txt');
             o_file_id = fopen(o_path);
-            o_data = fread(o_file_id, [512, 108900], 'float');
+            o_data = fread(o_file_id, [512, Inf], 'float');
             o_time = dlmread(o_time_path);
 
 			% timestamps for start and end of force measurement as well as start of oct measurement (end of oct measurement is calculated)
