@@ -90,7 +90,7 @@ for p = 1:1
         fclose(o_file_id);
 
 		cd ../time/;
-        time = [1, 2, 3];
+        time = linspace(0, (size(f_data, 2) - 1) / 1000, size(f_data, 2));
         t_file_id = fopen(strcat(file, '_time.bin'), 'w');
         fwrite(t_file_id, time, 'float');
         fclose(t_file_id);
