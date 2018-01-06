@@ -1,6 +1,6 @@
 %% Path to data
 
-folder_path = '';
+measured_data_path = 'measured_data/';
 
 for p = 1:1
     for m = 1:1
@@ -16,14 +16,14 @@ for p = 1:1
         if new_file
             disp(strcat('New file: ', file));
             % Force
-            f_path = strcat(folder_path, 'forces/', file, '.txt');
+            f_path = strcat(measured_data_path, 'forces/', file, '.txt');
             f_data = dlmread(f_path);
             f_time = f_data(:, 1);
             f_data = f_data(:, 4);
 
             % OCT
-            o_path = strcat(folder_path, 'oct/', file, '.bin');
-            o_time_path = strcat(folder_path, 'oct/', file, '_timestamp.txt');
+            o_path = strcat(measured_data_path, 'oct/', file, '.bin');
+            o_time_path = strcat(measured_data_path, 'oct/', file, '_timestamp.txt');
             o_file_id = fopen(o_path);
             o_data = fread(o_file_id, [512, Inf], 'float');
             o_time = dlmread(o_time_path);
@@ -86,29 +86,27 @@ for p = 1:1
         title('OCT');
 
         %% Write into file
-        f_data_final = strcat(file, '_force_z.bin');
-        o_data_final = strcat(file, '_oct.bin');
-        t_final = strcat(file, '_timestamp.bin');
-
-        cd forces/;
-        f_fileID = fopen(f_data_final, 'w');
-        fwrite(f_fileID, f_data, 'float');
-        fclose(f_fileID);
+        cd preprocessed_data/forces/;
+        f_file_id = fopen(strcat(file, '_forces.bin'), 'w');
+        fwrite(f_file_id, f_data, 'float');
+        fclose(f_file_id);
 
         cd ../oct/;
-        o_fileID = fopen(o_data_final, 'w');
-        fwrite(o_fileID, o_data, 'float');
-        fclose(o_fileID);
+        o_file_id = fopen(strcat(file, '_oct.bin'), 'w');
+        fwrite(o_file_id, o_data, 'float');
+        fclose(o_file_id);
 
-        timestamp = [1, 2, 3];
-        t_fileID = fopen(t_final, 'w');
-        fwrite(t_fileID, timestamp, 'float');
-        fclose(t_fileID);
+		cd ../time/;
+        time = [1, 2, 3];
+        t_file_id = fopen(strcat(file, '_time.bin'), 'w');
+        fwrite(t_file_id, time, 'float');
+        fclose(t_file_id);
         cd ..;
+		cd ..;
 
         %% Clear
         clear o_pks_flip o_locs_flip axis_max_flip axis_min_flip;
-        clear axis_max axis_min f_data_plot file_id folder_path o_data_flip o_max_plot o_locs_smooth;
+        clear axis_max axis_min f_data_plot file_id measured_data_path o_data_flip o_max_plot o_locs_smooth;
         clear o_path o_time_path;
     end;
 end;
