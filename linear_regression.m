@@ -11,6 +11,10 @@ end
 
 decimation = 100;
 
+% mean squared error and adjusted r squared
+mse = [];
+r_squared_adjusted = [];
+
 for k = 1:numel(file_names)
 	% validation set
 	validation_file = file_names(k);
@@ -46,7 +50,10 @@ for k = 1:numel(file_names)
 	% linear regression
 	linear_model = fitlm(oct_training, force_training);
 	force_prediction = predict(linear_model, oct_validation);
-	force_error = force_prediction - force_validation;
+
+	% model evaluation (see https://en.wikipedia.org/wiki/Regression_validation)
+	mse = [mse, linear_model.MSE];
+	r_squared_adjusted = [r_squared_adjusted, linear_model.Rsquared.Adjusted];
 
 	%plots
 	figure;
