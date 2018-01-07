@@ -10,7 +10,6 @@ for p = 1:3
 	end
 end
 
-decimation = 100;
 mse = [];
 r_squared_adjusted = [];
 
@@ -26,12 +25,12 @@ for p = 1:m:numel(all_files)
 		force_path = strcat(preprocessed_data_path, 'forces/', validation_files(i), '_forces.bin');
 		force_file_id = fopen(force_path);
 		force_data = fread(force_file_id, Inf, 'float');
-		force_validation = cat(1, force_validation, force_data(1:decimation:end));
+		force_validation = cat(1, force_validation, force_data(1:end));
 
 		oct_path = strcat(preprocessed_data_path, 'oct/', validation_files(i), '_oct.bin');
 		oct_file_id = fopen(oct_path);
 		oct_data = fread(oct_file_id, [512, Inf], 'float');
-		oct_validation = cat(1, oct_validation, oct_data(:, 1:decimation:end)');
+		oct_validation = cat(1, oct_validation, oct_data(:, 1:end)');
 
 		% some logical operations to get the training files indices
 		training_files_indices = training_files_indices & all_files~=validation_files(i);
@@ -45,12 +44,12 @@ for p = 1:m:numel(all_files)
 		force_path = strcat(preprocessed_data_path, 'forces/', training_files(i), '_forces.bin');
 		force_file_id = fopen(force_path);
 		force_data = fread(force_file_id, Inf, 'float');
-		force_training = cat(1, force_training, force_data(1:decimation:end));
+		force_training = cat(1, force_training, force_data(1:end));
 
 		oct_path = strcat(preprocessed_data_path, 'oct/', training_files(i), '_oct.bin');
 		oct_file_id = fopen(oct_path);
 		oct_data = fread(oct_file_id, [512, Inf], 'float');
-		oct_training = cat(1, oct_training, oct_data(:, 1:decimation:end)');
+		oct_training = cat(1, oct_training, oct_data(:, 1:end)');
 	end
 
 	% linear regression
