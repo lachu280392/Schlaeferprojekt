@@ -1,5 +1,7 @@
 preprocessed_data_path = 'data/preprocessed_data/';
 
+decimation = 100;
+
 for p = 1:1
 	for m = 1:1
         file = strcat('p', num2str(p), 'm', num2str(m));
@@ -7,11 +9,12 @@ for p = 1:1
         force_path = strcat(preprocessed_data_path, 'forces/', file, '_forces.bin');
         force_file_id = fopen(force_path);
         force_data = fread(force_file_id, Inf, 'float');
+		force_data = force_data(1:decimation:end);
 
         oct_path = strcat(preprocessed_data_path, 'oct/', file, '_oct.bin');
         oct_file_id = fopen(oct_path);
         oct_data = fread(oct_file_id, [512, Inf], 'float');
-		oct_data = oct_data';
+		oct_data = oct_data(:, 1:decimation:end)';
 
 		linear_model = fitlm(oct_data, force_data);
 
@@ -19,4 +22,8 @@ for p = 1:1
 	end
 end
 
-
+figure;
+hold on;
+plot(force_data);
+plot(force_prediction);
+xlim([0, size(force_data, 1)]);
