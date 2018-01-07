@@ -19,7 +19,7 @@ The results of cross validation are pending.
 ## Tasks for the Next Week
 
 On Wednesday we will take some measurements again, driving the oct against a hard beam to kind of calibrate the instrument.
-Than we will be able to train a model with these data and test it on the gelatine phantom data.
+Then we will be able to train a model with these data and test it on the gelatine phantom data.
 
 
 
