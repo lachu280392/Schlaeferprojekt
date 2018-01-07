@@ -1,3 +1,4 @@
+clear all;
 preprocessed_data_path = 'data/preprocessed_data/';
 
 % create array of all file names
