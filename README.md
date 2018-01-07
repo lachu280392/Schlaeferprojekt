@@ -2,9 +2,11 @@
 
 Intelligent Systems in Medicine Project Seminar
 
-## Directory Structure and Measured Data
+## Data
 
-After cloning this repository you need to create the following additional directories in your `Schlaeferprojekt` directory:
+The data can be downloaded from the TUHH cloud: https://cloud.tuhh.de/index.php/s/HvGl0LUsJwfGlzo.
+After cloning this repository you need to create the following additional directories in your `Schlaeferprojekt` directory to be compatible with the code:
+
 ```
 .
 └── data
@@ -17,4 +19,8 @@ After cloning this repository you need to create the following additional direct
         └── time
 ```
 
-The data can be downloaded from the TUHH cloud. The other directories are to be left empty.
+## Code
+
+Please use MATLAB R2016b.
+After downloading the data run `preprocess_data.m` before you run any other MATLAB script.
+It will process and write the measured data to the subdirectories of `preprocessed_data`.
