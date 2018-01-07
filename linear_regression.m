@@ -66,7 +66,7 @@ for p = 1:m:numel(all_files)
 	plot(force_validation);
 	plot(smooth(force_prediction, 31));
 	xlim([0, size(force_validation, 1)]);
-	title(strcat('Phantom', num2str(p - m)));
+	title(strcat('Phantom ', num2str((p - 1) / 3 + 1)));
 end
 
 % output
