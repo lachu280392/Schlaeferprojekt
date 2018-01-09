@@ -1,7 +1,7 @@
 function features = extract_features(oct_data)
     mean_value = mean(oct_data, 1);
     oct_sorted = sort(oct_data, 1, 'descend');
-    number_of_maxima_per_scan = 9;
+    number_of_maxima_per_scan = 3;
     maximum_intensity = [];
     maximum_index = [];
     standard_deviation = [];
@@ -13,6 +13,8 @@ function features = extract_features(oct_data)
         end
         standard_deviation = cat(2, standard_deviation, std(oct_data(:, i)));
     end
+    % this is weird. For number_of_maxima_per_scan > ~20, the size of the vector is slightly larger than it should be...
+    maximum_index = maximum_index(1:number_of_maxima_per_scan * size(oct_data, 2));
     maximum_index = reshape(maximum_index, [number_of_maxima_per_scan, size(oct_data, 2)]);
     % ATTENTION PLEASE! the feature table must have time as the first dimension. Hence, some features need to be transposed because the OCT has the time as the second dimension.
     features = table(mean_value', maximum_intensity', maximum_index', standard_deviation');
