@@ -11,7 +11,6 @@ for p = 1:3
 end
 
 mse = [];
-r_squared_adjusted = [];
 
 % 3-fold cross validation with data from 1 phantom as validation set and data from the other 2 phantoms as training sets
 for p = 1:m:numel(all_files)
@@ -58,7 +57,6 @@ for p = 1:m:numel(all_files)
 
     % model evaluation (see https://en.wikipedia.org/wiki/Regression_validation)
     mse = [mse, linear_model.MSE];
-    r_squared_adjusted = [r_squared_adjusted, linear_model.Rsquared.Adjusted];
 
     % plots
     figure;
@@ -71,4 +69,3 @@ end
 
 % output
 mse
-r_squared_adjusted
