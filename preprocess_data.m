@@ -29,14 +29,16 @@ for p = 1:3
         oct_time = dlmread(oct_time_path);
 
         % timestamps for start and end of force measurement as well as start of oct measurement (end of oct measurement is calculated)
-        time = readtable('timestamps.txt', 'Format', '%s%u%u%u');
+        opts = detectImportOptions('timestamps.txt');
+        opts.DataLine = 2;
+        time = readtable('timestamps.txt', opts);
         for i=1:9
             if strcmp(time.Var1(i), file)
-                force_start = time.Var2(i);
-                force_end = time.Var3(i);
+                force_start = time.force_start(i);
+                force_end = time.force_end(i);
                 force_number_of_samples = force_end - force_start + 1;
                 force_sampling_frequency = 10^6 * size(force_time, 1) / (force_time(end) - force_time(1));
-                oct_start = time.Var4(i);
+                oct_start = time.oct_start(i);
                 oct_sampling_frequency = 100 * size(oct_time, 1) / (oct_time(end) - oct_time(1));
                 oct_number_of_samples = round(force_number_of_samples * oct_sampling_frequency / force_sampling_frequency);
                 oct_end = oct_start + oct_number_of_samples - 1;
