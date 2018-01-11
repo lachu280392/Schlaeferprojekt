@@ -3,7 +3,7 @@
 
 %% Read data
 
-data_path = '/media/yuria/TOSHIBA EXT/metal_data/';
+data_path = 'data/metal/';
 disp(strcat('your path is: ', data_path));
 prompt = 'linear or stepwise? [l/s] ';
 type = input(prompt, 's'); 
@@ -24,7 +24,8 @@ force_data = dlmread(force_path);
 force_time = force_data(:,1);
 force_data = force_data(:,4);
 
-oct_path = strcat(data_path, 'oct/metal_', type, '_', number);
+oct_path = strcat(data_path, 'oct/metal_', type, '_', number, '.bin');
+
 oct_file_id = fopen(oct_path);
 oct_data = fread(oct_file_id, [512, inf], 'float');
 
@@ -49,8 +50,11 @@ force_end = input(prompt);
 %% oct_start
 prompt = 'oct_start: ';
 oct_start = input(prompt);
+%% oct_end
+prompt = 'oct_end: ';
+oct_end = input(prompt);
 
 %% Write into timestamps.txt
 write_id = fopen('timestamps.txt', 'a');
-fprintf(write_id, '%s,%u,%u,%u\n', name, force_start, force_end, oct_start);
+fprintf(write_id, '%s,%u,%u,%u,%u\n', name, force_start, force_end, oct_start, oct_end);
 fclose(write_id);
