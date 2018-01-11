@@ -1,4 +1,4 @@
-Measurement, force_start, force_end, oct_end
+Measurement, force_start, force_end, oct_start
 p1m1,3851,39996,10640
 p1m2,4557,40565,8407
 p1m3,3640,39722,9812
@@ -33,3 +33,7 @@ metal_stepwise_11,1241,1725,14410
 metal_stepwise_12,946,1424,11560
 metal_stepwise_13,680,1326,7911
 metal_stepwise_14,1695,2518,20650
+metal_linear_3,446,722,8606
+metal_stepwise_8,527,1087,6064
+metal_stepwise_15,650,1461,7465
+metal_linear_3,442,718,8605
