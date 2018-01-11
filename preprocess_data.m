@@ -74,16 +74,22 @@ for i = 1:numel(files)
     force_data = force_data(1:decimation:end);
     oct_data = oct_data(:, 1:decimation:end);
 
+    % maximum values
+    [oct_pks, oct_locs] = max(oct_data);
+
+    % horizontal slicing
+    oct_mean = mean(oct_locs);
+    oct_std = std(oct_locs);
+    lower_boundary = max(floor(oct_mean - 3 * oct_std), 1);
+    upper_boundary = ceil(oct_mean + 3 * oct_std);
+    oct_data = oct_data(lower_boundary:upper_boundary, :);
+
     %% plot
     if (not(no_plots))
-        % maximum values
-        [oct_pks, oct_locs] = max(oct_data);
-        oct_locs_smooth = smooth(oct_locs);
         % flip 
+        oct_locs_smooth = smooth(oct_locs);
         oct_data_flip = flipud(oct_data);
         [~, oct_locs_flip] = max(oct_data_flip);
-        axis_max_flip = oct_locs_flip(1) + 70;
-        axis_min_flip = oct_locs_flip(1) - 70;
 
         figure('name', file);
         title(file);
@@ -99,7 +105,7 @@ for i = 1:numel(files)
         image(oct_data_flip);
         hold on;
         plot(smooth(oct_locs_flip), '.r');
-        axis([0, size(oct_data, 2), axis_min_flip, axis_max_flip]);
+        xlim([0, size(oct_data, 2)]);
         xlabel('Time');
         ylabel('Depth');
         title('OCT');
