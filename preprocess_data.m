@@ -2,7 +2,7 @@ clear all;
 % set 'no_write' to true to prevent writing data to files
 no_write = false;
 % set 'no_plots' to true to prevent plots
-no_plots = true;
+no_plots = false;
 
 % the sampling frequencies were averaged over all measurements
 force_sampling_frequency_metal = 1.000449978653207e+02;
@@ -11,6 +11,9 @@ oct_sampling_frequency = 1.226095404779195e+03;
 
 % the decimation is used to reduce the resolution of force and oct data. decimation = 100 means that every 100ths value is used
 decimation = 1;
+
+% the 50 horizontal_slicing means that the oct data is reduced to all data of the mean depth +- 50
+horizontal_slicing = 50;
 
 % Path to data
 data_path = 'data/';
@@ -78,7 +81,6 @@ for file_index = 1:numel(files)
     end
 
     % remove offset
-    oct_end = oct_start + 100;
     force_data = force_data(force_start:force_end);
     oct_data = oct_data(:, oct_start:oct_end);
 
@@ -93,10 +95,9 @@ for file_index = 1:numel(files)
     [oct_pks, oct_locs] = max(oct_data);
 
     % horizontal slicing
-    oct_mean = mean(oct_locs);
-    oct_std = std(oct_locs);
-    lower_boundary = max(floor(oct_mean - 3 * oct_std), 1);
-    upper_boundary = ceil(oct_mean + 3 * oct_std);
+    oct_mean = round(mean(oct_locs));
+    lower_boundary = oct_mean - horizontal_slicing;
+    upper_boundary = oct_mean + horizontal_slicing;
     oct_data = oct_data(lower_boundary:upper_boundary, :);
 
     %% plot
