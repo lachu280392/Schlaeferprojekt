@@ -9,17 +9,20 @@ After cloning this repository you need to create the following additional direct
 
 ```
 .
-└── data
-    ├── measured_data
-    │   ├── forces
-    │   └── oct
-    ├── metal_data
+├── data
+│   ├── metal
+│   │   ├── forces
+│   │   └── oct
+│   └── phantoms
+│       ├── forces
+│       └── oct
+└── preprocessed_data
+    ├── metal
     │   ├── forces
     │   └── oct
-    └── preprocessed_data
+    └── phantoms
         ├── forces
-        ├── oct
-        └── time
+        └── oct
 ```
 
 ## Code
