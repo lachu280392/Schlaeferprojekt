@@ -16,6 +16,7 @@ After cloning this repository you need to create the following additional direct
 │   └── phantoms
 │       ├── forces
 │       └── oct
+├── models
 └── preprocessed_data
     ├── metal
     │   ├── forces
