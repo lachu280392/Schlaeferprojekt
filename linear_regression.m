@@ -8,7 +8,6 @@ metal_files = ls(strcat(metal_path, 'forces/'));
 metal_files = metal_files(1:end - 1);
 metal_files = convertCharsToStrings(metal_files);
 metal_files = strsplit(metal_files);
-metal_files = erase(metal_files, '.txt');
 
 mean_squared_error = [];
 

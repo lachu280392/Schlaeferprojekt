@@ -1,8 +1,8 @@
 clear all;
-% set 'no_write' to true to prevent writing data to files
-no_write = false;
-% set 'no_plots' to true to prevent plots
-no_plots = false;
+% preprocessed data is written to files
+write_to_file = true;
+% preprocessed data is plotted
+plot_data = true;
 
 % the sampling frequencies were averaged over all measurements
 force_sampling_frequency_metal = 1.000449978653207e+02;
@@ -105,7 +105,7 @@ for file_index = 1:numel(files)
     oct_data = oct_data(lower_boundary:upper_boundary, :);
 
     %% plot
-    if (not(no_plots))
+    if (plot_data)
         % flip 
         oct_locs_smooth = smooth(oct_locs);
         oct_data_flip = flipud(oct_data);
@@ -132,7 +132,7 @@ for file_index = 1:numel(files)
     end
 
     %% write into file
-    if (not(no_write))
+    if (write_to_file)
         preprocessed_data_path = 'preprocessed_data/';
 
         % write force data
