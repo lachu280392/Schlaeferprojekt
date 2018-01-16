@@ -1,54 +1,45 @@
 clear all;
-preprocessed_data_path = 'data/preprocessed_data/';
+metal_path= 'preprocessed_data/metal/';
 
-% create array of all file names
-all_files = [];
-for p = 1:3
-    for m = 1:3
-        file = string(strcat('p', num2str(p), 'm', num2str(m)));
-        all_files = [all_files, file];
-    end
-end
+depth = 2 * 50 + 1;
 
-mse = [];
+% all metal files, i. e. the training and validation set
+metal_files = ls(strcat(metal_path, 'forces/'));
+metal_files = metal_files(1:end - 1);
+metal_files = convertCharsToStrings(metal_files);
+metal_files = strsplit(metal_files);
+metal_files = erase(metal_files, '.txt');
 
-% 3-fold cross validation with data from 1 phantom as validation set and data from the other 2 phantoms as training sets
-for p = 1:m:numel(all_files)
-    % validation set
-    validation_files = all_files(p:p+m-1);
-    disp(validation_files);
-    force_validation = [];
-    oct_validation = [];
-    training_files_indices = logical(ones(1, numel(all_files)));
-    for i = 1:numel(validation_files)
-        force_path = strcat(preprocessed_data_path, 'forces/', validation_files(i), '_forces.bin');
-        force_file_id = fopen(force_path);
-        force_data = fread(force_file_id, Inf, 'float');
-        force_validation = cat(1, force_validation, force_data(1:end));
+mean_squared_error = [];
 
-        oct_path = strcat(preprocessed_data_path, 'oct/', validation_files(i), '_oct.bin');
-        oct_file_id = fopen(oct_path);
-        oct_data = fread(oct_file_id, [512, Inf], 'float');
-        oct_validation = cat(1, oct_validation, oct_data(:, 1:end)');
+% perform leave-one-out cross validation with all metal files
+for file_index = 1:1%numel(metal_files)
+    % decide which files are used for training and validation
+    validation_file = metal_files(file_index)
+    training_files = metal_files(metal_files~=validation_file);
 
-        % some logical operations to get the training files indices
-        training_files_indices = training_files_indices & all_files~=validation_files(i);
-    end
+    % force_data for validation
+    force_path = strcat(metal_path, 'forces/', validation_file);
+    force_file_id = fopen(force_path);
+    force_validation = fread(force_file_id, Inf, 'float');
 
-    % training set
-    training_files = all_files(training_files_indices);
+    % oct_data for validation
+    oct_path = strcat(metal_path, 'oct/', validation_file);
+    oct_file_id = fopen(oct_path);
+    oct_validation = fread(oct_file_id, [depth, Inf], 'float')';
+
     force_training = [];
     oct_training = [];
-    for i = 1:numel(training_files)
-        force_path = strcat(preprocessed_data_path, 'forces/', training_files(i), '_forces.bin');
+    for training_files_index = 1:numel(training_files)
+        force_path = strcat(metal_path, 'forces/', training_files(training_files_index));
         force_file_id = fopen(force_path);
-        force_data = fread(force_file_id, Inf, 'float');
-        force_training = cat(1, force_training, force_data(1:end));
+        force_buffer = fread(force_file_id, Inf, 'float');
+        force_training = cat(1, force_training, force_buffer);
 
-        oct_path = strcat(preprocessed_data_path, 'oct/', training_files(i), '_oct.bin');
+        oct_path = strcat(metal_path, 'oct/', training_files(training_files_index));
         oct_file_id = fopen(oct_path);
-        oct_data = fread(oct_file_id, [512, Inf], 'float');
-        oct_training = cat(1, oct_training, oct_data(:, 1:end)');
+        oct_buffer = fread(oct_file_id, [depth, Inf], 'float');
+        oct_training = cat(1, oct_training, oct_buffer');
     end
 
     % linear regression
@@ -56,16 +47,17 @@ for p = 1:m:numel(all_files)
     force_prediction = predict(linear_model, oct_validation);
 
     % model evaluation (see https://en.wikipedia.org/wiki/Regression_validation)
-    mse = [mse, linear_model.MSE];
+    mean_squared_error = [mean_squared_error, linear_model.MSE];
 
     % plots
     figure;
     hold on;
     plot(force_validation);
-    plot(smooth(force_prediction, 31));
+    plot(force_prediction);
     xlim([0, size(force_validation, 1)]);
-    title(strcat('Phantom ', num2str((p - 1) / 3 + 1)));
-end
+    title(validation_file);
 
-% output
-mse
+    % save model
+    model_path = 'models/linear_model';
+    save(model_path, 'linear_model');
+end

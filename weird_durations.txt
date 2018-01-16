@@ -1,0 +1,5 @@
+the following files have weird durations; the timestamps of the measurement seem to be erroneous
+metal_stepwise_2
+metal_stepwise_8
+metal_stepwise_1
+metal_linear_3
