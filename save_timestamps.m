@@ -53,5 +53,5 @@ oct_start = input(prompt);
 
 %% Write into timestamps.txt
 write_id = fopen('timestamps.txt', 'a');
-fprintf(write_id, '%s,%u,%u,%u\n', name, force_start, force_end, oct_start;
+fprintf(write_id, '%s,%u,%u,%u\n', name, force_start, force_end, oct_start);
 fclose(write_id);
