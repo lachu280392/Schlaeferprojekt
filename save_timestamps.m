@@ -50,11 +50,8 @@ force_end = input(prompt);
 %% oct_start
 prompt = 'oct_start: ';
 oct_start = input(prompt);
-%% oct_end
-prompt = 'oct_end: ';
-oct_end = input(prompt);
 
 %% Write into timestamps.txt
 write_id = fopen('timestamps.txt', 'a');
-fprintf(write_id, '%s,%u,%u,%u,%u\n', name, force_start, force_end, oct_start, oct_end);
+fprintf(write_id, '%s,%u,%u,%u\n', name, force_start, force_end, oct_start;
 fclose(write_id);
