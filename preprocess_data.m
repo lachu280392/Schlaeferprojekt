@@ -49,9 +49,11 @@ for file_index = 1:numel(files)
     if (contains(file, 'metal'))
         metal_or_phantom = 'metal/';
         force_sampling_frequency = force_sampling_frequency_metal;
+        smoothing_parameter = 5;
     else
         metal_or_phantom = 'phantoms/';
         force_sampling_frequency = force_sampling_frequency_phantoms;
+        smoothing_parameter = 50;
     end
 
     % read force data
@@ -84,6 +86,8 @@ for file_index = 1:numel(files)
     force_data = force_data(force_start:force_end);
     oct_data = oct_data(:, oct_start:oct_end);
 
+    % smooth force data
+    force_data = smooth(force_data, smoothing_parameter);
     % interpolate
     force_data = interp1(1:numel(force_data), force_data', linspace(1, numel(force_data), size(oct_data, 2)));
 
