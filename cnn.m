@@ -42,11 +42,10 @@ for file_index = 1:1%numel(metal_files)
         oct_training = cat(1, oct_training, oct_buffer');
     end
 
-    
-    % define inputs and outputs
-    inputs = zeros(depth, 1, 1, size(oct_training, 1));
-    inputs(:, 1, 1, :) = oct_training';
-    outputs = force_training;
+    % inputs need to be 4 dimensional
+    oct_buffer = zeros(depth, 1, 1, size(oct_training, 1));
+    oct_buffer(:, 1, 1, :) = oct_training';
+    oct_training = oct_buffer;
 
     % define layers
     layers = [
@@ -54,6 +53,7 @@ for file_index = 1:1%numel(metal_files)
     
         convolution2dLayer([3, 1], 1)
         reluLayer
+        batchNormalizationLayer
  
         fullyConnectedLayer(1)
         regressionLayer];
@@ -73,9 +73,13 @@ for file_index = 1:1%numel(metal_files)
         'Plots', 'training-progress');
 
     % train network
-    net = trainNetwork(inputs, outputs, layers, options);
+    net = trainNetwork(oct_training, force_training, layers, options);
 
-    force_prediction = 0;
+    % convert oct_validation to 4 dimensional array and predict force
+    oct_buffer = zeros(depth, 1, 1, size(oct_validation, 1));
+    oct_buffer(:, 1, 1, :) = oct_validation';
+    oct_validation = oct_buffer;
+    force_prediction = predict(net, oct_validation);
 
     % plots
     figure;
@@ -86,6 +90,6 @@ for file_index = 1:1%numel(metal_files)
     title(validation_file);
 
     % save model
-    model_path = 'models/linear_model';
-    save(model_path, 'linear_model');
+    model_path = 'models/cnn';
+    save(model_path, 'net');
 end
