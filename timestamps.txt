@@ -1,39 +1,39 @@
-Measurement, force_start, force_end, oct_start
-p1m1,3851,39996,10640
-p1m2,4557,40565,8407
-p1m3,3640,39722,9812
-p2m1,3183,39277,7405
-p2m2,9434,45306,22290
-p2m3,3230,39105,8099
-p3m1,5007,40975,13680
-p3m2,2714,38741,8191
-p3m3,3387,39254,9818
-metal_linear_2,469,660,5975
-metal_linear_4,587,772,7322
-metal_linear_5,1494,1677,19380
-metal_linear_6,605,751,6637
-metal_linear_7,626,1515,7379
-metal_linear_8,437,1322,5158
-metal_linear_9,582,1552,7004
-metal_linear_10,623,1400,7257
-metal_linear_11,637,1326,7409
-metal_linear_12,509,1205,5848
-metal_linear_13,556,1046,6122
-metal_linear_14,429,929,4850
-metal_stepwise_1,1397,1688,17120
-metal_stepwise_2,755,1074,9334
-metal_stepwise_3,486,801,5965
-metal_stepwise_4,517,742,5997
-metal_stepwise_5,512,717,5879
-metal_stepwise_6,420,627,5278
-metal_stepwise_7,574,893,6619
-metal_stepwise_9,567,798,6691
-metal_stepwise_10,513,737,6331
-metal_stepwise_11,1241,1725,14410
-metal_stepwise_12,946,1424,11560
-metal_stepwise_13,680,1326,7911
-metal_stepwise_14,1695,2518,20650
-metal_linear_3,446,722,8606
-metal_stepwise_8,527,1087,6064
-metal_stepwise_15,650,1461,7465
-metal_linear_3,442,602,8605
+Measurement, force_start, force_end, oct_start, use_file 
+p1m1,3851,39996,10640, 1 
+p1m2,4557,40565,8407, 1
+p1m3,3640,39722,9812, 1
+p2m1,3183,39277,7405, 1
+p2m2,9434,45306,22290, 1
+p2m3,3230,39105,8099, 1
+p3m1,5007,40975,13680, 1
+p3m2,2714,38741,8191, 1
+p3m3,3387,39254,9818, 1
+metal_linear_2,469,660,5975, 1
+metal_linear_4,587,772,7322, 1
+metal_linear_5,1494,1677,19380, 1
+metal_linear_6,605,751,6637, 1
+metal_linear_7,626,1515,7379, 1
+metal_linear_8,437,1322,5158, 1
+metal_linear_9,582,1552,7004, 1
+metal_linear_10,623,1400,7257, 1
+metal_linear_11,637,1326,7409, 1
+metal_linear_12,509,1205,5848, 1
+metal_linear_13,556,1046,6122, 1
+metal_linear_14,429,929,4850, 1
+metal_stepwise_1,1397,1688,17120, 1
+metal_stepwise_2,755,1074,9334, 1
+metal_stepwise_3,486,801,5965, 1
+metal_stepwise_4,517,742,5997, 1
+metal_stepwise_5,512,717,5879, 1
+metal_stepwise_6,420,627,5278, 1
+metal_stepwise_7,574,893,6619, 1
+metal_stepwise_9,567,798,6691, 1
+metal_stepwise_10,513,737,6331, 1
+metal_stepwise_11,1241,1725,14410, 1
+metal_stepwise_12,946,1424,11560, 1
+metal_stepwise_13,680,1326,7911, 1
+metal_stepwise_14,1695,2518,20650, 1
+metal_linear_3,446,722,8606, 1
+metal_stepwise_8,527,1087,6064, 1
+metal_stepwise_15,650,1461,7465, 1
+metal_linear_3,442,602,8605, 1
