@@ -51,6 +51,7 @@ for file_index = 1:1%numel(metal_files)
     force_training = num2cell(force_training');
     net = layrecnet(1, 5);
     net.trainParam.showCommandLine = true;
+    net.trainFcn = 'trainbr';
     [net, training_record] = train(net, maximum_intensity_index_training, force_training);
 
     % predict force
