@@ -1,6 +1,6 @@
 clear all;
 % preprocessed data is written to files
-write_to_file = true;
+write_to_file = false;
 % preprocessed data is plotted
 plot_data = true;
 
@@ -34,16 +34,10 @@ phantoms_files = strsplit(phantoms_files);
 files = [metal_files, phantoms_files];
 files = erase(files, '.txt');
 
-% files to be excluded
-excluded_files = [];
-excluded_files = convertCharsToStrings(excluded_files);
-for file_index = 1:numel(excluded_files)
-    files = files(files~=excluded_files(file_index));
-end
-
+%%
 for file_index = 1:numel(files)
     % current file
-    file = files(file_index)
+    file = files(file_index);
 
     % choose proper directory for current file
     if (contains(file, 'metal'))
@@ -54,6 +48,34 @@ for file_index = 1:numel(files)
         metal_or_phantom = 'phantoms/';
         force_sampling_frequency = force_sampling_frequency_phantoms;
         smoothing_parameter = 50;
+    end
+    
+    % timestamps for start and end of force measurement as well as start of oct measurement (end of oct measurement is calculated)
+    opts = detectImportOptions('timestamps.txt');
+    opts.DataLine = 2;
+    timestamps = readtable('timestamps.txt', opts);
+    
+    for i = 1:size(timestamps, 1)
+        if strcmp(timestamps.Measurement(i), file)
+            if timestamps.use_file(i) == 1
+                use_this_file = true;
+            else
+                use_this_file = false;
+            end
+            force_start = timestamps.force_start(i);
+            force_end = timestamps.force_end(i);
+            oct_start = timestamps.oct_start(i);
+            oct_end = round(oct_start + (oct_sampling_frequency / force_sampling_frequency * (force_end - force_start)));
+        end
+    end
+    
+    % bool if file should be used is set in timestamps.txt
+    % if it is set to false, this file will not be loaded and user for
+    % preprocessing
+    if use_this_file == false
+        continue;
+    else
+        disp(file);
     end
 
     % read force data
@@ -68,19 +90,6 @@ for file_index = 1:numel(files)
     oct_data = fread(oct_file_id, [512, Inf], 'float');
     oct_time_path = strcat(data_path, metal_or_phantom, 'oct/', file, '_timestamp.txt');
     oct_time = dlmread(oct_time_path);
-
-    % timestamps for start and end of force measurement as well as start of oct measurement (end of oct measurement is calculated)
-    opts = detectImportOptions('timestamps.txt');
-    opts.DataLine = 2;
-    timestamps = readtable('timestamps.txt', opts);
-    for i = 1:size(timestamps, 1)
-        if strcmp(timestamps.Measurement(i), file)
-            force_start = timestamps.force_start(i);
-            force_end = timestamps.force_end(i);
-            oct_start = timestamps.oct_start(i);
-            oct_end = round(oct_start + (oct_sampling_frequency / force_sampling_frequency * (force_end - force_start)));
-        end
-    end
 
     % remove offset
     force_data = force_data(force_start:force_end);
@@ -112,7 +121,7 @@ for file_index = 1:numel(files)
         [~, oct_locs_flip] = max(oct_data_flip);
 
         figure('name', file);
-        title(file);
+        title(file, 'Interpreter', 'none');
 
         subplot(2,1,1);
         plot(force_data);
