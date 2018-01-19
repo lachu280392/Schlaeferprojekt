@@ -1,21 +1,26 @@
 function features = extract_features(oct_data)
-    mean_value = mean(oct_data, 1);
+    assert(size(oct_data, 1) < size(oct_data, 2), 'The time axis of the OCT data should be the second dimension. Please consider transposing your data!');
+    % sort oct data to easily find maxima
     oct_sorted = sort(oct_data, 1, 'descend');
-    number_of_maxima_per_scan = 3;
-    maximum_intensity = [];
+    number_of_maxima_per_scan = 4;
     depth_at_maximum_intensity = [];
-    standard_deviation = [];
     for i = 1:size(oct_data, 2)
-        maximum_intensity = cat(2, maximum_intensity, oct_sorted(1:number_of_maxima_per_scan, i));
-        for j = 1:number_of_maxima_per_scan
-            depth_at_maximum_intensity = cat(1, depth_at_maximum_intensity, find(oct_data(:, i) == maximum_intensity(j, i)));
+        % find a number of depths with the largest intensities
+        maximum_intensity = oct_sorted(1:number_of_maxima_per_scan, i);
+        depth_buffer = [];
+            for j = 1:number_of_maxima_per_scan
+            depth_buffer = cat(1, depth_buffer, find(oct_data(:, i) == maximum_intensity(j)));
         end
-        standard_deviation = cat(2, standard_deviation, std(oct_data(:, i)));
+        % use only the lowest depth
+        depth_at_maximum_intensity = cat(1, depth_at_maximum_intensity, min(depth_buffer));
     end
-    % this is weird. For number_of_maxima_per_scan > ~20, the size of the vector is slightly larger than it should be...
-    depth_at_maximum_intensity = depth_at_maximum_intensity(1:number_of_maxima_per_scan * size(oct_data, 2));
-    depth_at_maximum_intensity = reshape(depth_at_maximum_intensity, [number_of_maxima_per_scan, size(oct_data, 2)]);
-    % ATTENTION PLEASE! the feature table must have time as the first dimension. Hence, some features need to be transposed because the OCT has the time as the second dimension.
-    features = table(mean_value', maximum_intensity', depth_at_maximum_intensity', standard_deviation');
-    features.Properties.VariableNames = {'mean_value', 'maximum_intensity', 'depth_at_maximum_intensity', 'standard_deviation'};
+    % fill local outliers by linear interpolation
+    depth_at_maximum_intensity = filloutliers(depth_at_maximum_intensity, 'linear', 'movmean', 64);
+    % moving average for smoothing
+    depth_at_maximum_intensity = smooth(depth_at_maximum_intensity, 32);
+    % standardize features
+    depth_at_maximum_intensity = zscore(depth_at_maximum_intensity);
+    % create table of features
+    features = table(depth_at_maximum_intensity');
+    features.Properties.VariableNames = {'depth_at_maximum_intensity'};
 end
