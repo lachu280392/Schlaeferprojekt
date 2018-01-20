@@ -95,16 +95,13 @@ for cross_validation_iteration = 1:number_of_cross_validations
     xlim([0, size(force_validation, 1)]);
     title(strcat('iteration ', num2str(cross_validation_iteration)));
 
-    figure;
-    plot(depth_at_maximum_intensity_validation);
-
     % close all files
     fclose('all');
 end
 
 % train final model with all data
 force_data = [];
-oct_data = [];
+depth_at_maximum_intensity = [];
 for file_index = 1:numel(metal_files)
     force_path = strcat(metal_path, 'forces/', metal_files(file_index));
     force_file_id = fopen(force_path);
@@ -116,7 +113,7 @@ for file_index = 1:numel(metal_files)
     oct_file_id = fopen(oct_path);
     oct_buffer = fread(oct_file_id, [depth, Inf], 'float');
     features_buffer = extract_features(oct_buffer);
-    depth_at_maximum_intensity = cat(1, depth_at_maximum_intensity_validation, (features_buffer.depth_at_maximum_intensity)');
+    depth_at_maximum_intensity = cat(1, depth_at_maximum_intensity, (features_buffer.depth_at_maximum_intensity)');
 end
 
 % linear regression
