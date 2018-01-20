@@ -35,14 +35,14 @@ function features = extract_features(oct_data)
         depth_at_maximum_intensity = cat(1, depth_at_maximum_intensity, min(depth_buffer));
     end
 
+    % subtract reference depth
+    depth_at_maximum_intensity = depth_at_maximum_intensity - reference_depth;
+
     % fill local outliers by linear interpolation
     depth_at_maximum_intensity = filloutliers(depth_at_maximum_intensity, 'linear', 'movmean', 64);
 
     % moving average for smoothing
     depth_at_maximum_intensity = smooth(depth_at_maximum_intensity, 32);
-
-    % standardize features
-    depth_at_maximum_intensity = zscore(depth_at_maximum_intensity);
 
     % create table of features
     features = table(depth_at_maximum_intensity');
