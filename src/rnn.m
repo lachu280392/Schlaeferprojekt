@@ -23,8 +23,8 @@ for file_index = 1:1%numel(metal_files)
     % concatenate the features extracted from all metal files
     oct_path = strcat(metal_path, 'oct/', metal_files(file_index));
     oct_file_id = fopen(oct_path);
-    oct_data  = fread(oct_file_id, [depth, Inf], 'float');
-    features = cat(1, features, extract_features(oct_data));
+    oct_buffer  = fread(oct_file_id, [depth, Inf], 'float');
+    features = cat(1, features, extract_features(oct_buffer));
 end
 
 % convert to cell arrays
