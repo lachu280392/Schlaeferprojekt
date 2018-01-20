@@ -23,20 +23,23 @@ for file_index = 1:numel(phantoms_files)
     force_path = strcat(phantoms_path, 'forces/', testing_file);
     force_file_id = fopen(force_path);
     force_testing = fread(force_file_id, Inf, 'float');
+    force_testing = force_testing - mean(force_testing(1:9));
 
     % oct_data for testing
     oct_path = strcat(phantoms_path, 'oct/', testing_file);
     oct_file_id = fopen(oct_path);
-    oct_testing = fread(oct_file_id, [depth, Inf], 'float')';
+    oct_buffer = fread(oct_file_id, [depth, Inf], 'float');
+    features_buffer = extract_features(oct_buffer);
+    depth_at_maximum_intensity = features_buffer.depth_at_maximum_intensity';
 
-    if (contains(model_path, 'cnn'))
-        oct_buffer = zeros(depth, 1, 1, size(oct_testing, 1));
-        oct_buffer(:, 1, 1, :) = oct_testing';
-        oct_testing = oct_buffer;
-    end
+    %if (contains(model_path, 'cnn'))
+    %    oct_buffer = zeros(depth, 1, 1, size(oct_testing, 1));
+    %    oct_buffer(:, 1, 1, :) = oct_testing';
+    %    oct_testing = oct_buffer;
+    %end
 
     % model evaluation (see https://en.wikipedia.org/wiki/Regression_validation)
-    force_prediction = double(predict(model, oct_testing));
+    force_prediction = double(predict(model, depth_at_maximum_intensity));
     mean_squared_error = [mean_squared_error, immse(force_prediction, force_testing)];
 
     % plots
@@ -46,4 +49,7 @@ for file_index = 1:numel(phantoms_files)
     plot(force_prediction);
     xlim([0, size(force_testing, 1)]);
     title(testing_file);
+
+    figure;
+    plot(depth_at_maximum_intensity);
 end
