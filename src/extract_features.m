@@ -7,19 +7,28 @@ function features = extract_features(oct_data)
     % the reference depth is used to try to remove the zero line
     reference_intensity = oct_sorted(1, 1);
     reference_depth = find(oct_data(:, 1) == reference_intensity);
-    reference_depth = reference_depth - round(0.05 * size(oct_data, 1))
+    reference_depth = reference_depth - round(0.05 * size(oct_data, 1));
 
-    % multiple maxima are collected; only the smallest depth is used
-    number_of_maxima_per_scan = 9;
+    maxima_to_consider = 42;
     depth_at_maximum_intensity = [];
     for i = 1:size(oct_data, 2)
-        % find a number of depths with the largest intensities
-        maximum_intensity = oct_sorted(1:number_of_maxima_per_scan, i);
+        % threshold for candidates of maximal intensity
+        intensity_threshold = 0.85 * oct_sorted(1, i);
+
+        % find intensities that are larger than the threshold
+        j = 2;
+        maximum_intensities = [];
+        while ((oct_sorted(j, i) > intensity_threshold) & j < maxima_to_consider)
+            maximum_intensities = cat(1, maximum_intensities, oct_sorted(j, i));
+            j = j + 1;
+        end
 
         % initialization with the reference depth makes sure that no depth larger than it is considered
         depth_buffer = [reference_depth];
-        for j = 1:number_of_maxima_per_scan
-            depth_buffer = cat(1, depth_buffer, find(oct_data(:, i) == maximum_intensity(j)));
+
+        % find the depths of all maximum intensities
+        for k = 1:numel(maximum_intensities)
+            depth_buffer = cat(1, depth_buffer, find(oct_data(:, i) == maximum_intensities(k)));
         end
 
         % use only the lowest depth
