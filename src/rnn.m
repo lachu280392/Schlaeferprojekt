@@ -1,5 +1,5 @@
 clear all;
-metal_path= 'preprocessed_data/metal/';
+metal_path= '../preprocessed_data/metal/';
 
 depth = 2 * 50 + 1;
 
@@ -38,4 +38,5 @@ net.trainFcn = 'trainlm';
 [net, training_record] = train(net, depth_at_maximum_intensity, force_data);
 
 % save model
-model_path = 'models/rnn'; save(model_path, 'net');
+model_path = '../models/rnn';
+save(model_path, 'net');

@@ -1,12 +1,12 @@
 function mean_squared_error = test_model(model_name)
 % load model
-model_path = strcat('models/', model_name);
+model_path = strcat('../models/', model_name);
 model = load(model_path);
 model = struct2cell(model);
 model = model{1};
 
 % all phantom files, i. e. the testing set
-phantoms_path = 'preprocessed_data/phantoms/';
+phantoms_path = '../preprocessed_data/phantoms/';
 phantoms_files = ls(strcat(phantoms_path, 'forces/'));
 phantoms_files = phantoms_files(1:end - 1);
 phantoms_files = convertCharsToStrings(phantoms_files);

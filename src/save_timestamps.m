@@ -3,7 +3,7 @@
 
 %% Read data
 
-data_path = 'data/metal/';
+data_path = '../data/metal/';
 disp(strcat('your path is: ', data_path));
 prompt = 'linear or stepwise? [l/s] ';
 type = input(prompt, 's'); 

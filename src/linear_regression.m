@@ -1,5 +1,5 @@
 clear all;
-metal_path= 'preprocessed_data/metal/';
+metal_path= '../preprocessed_data/metal/';
 
 depth = 2 * 50 + 1;
 
@@ -113,5 +113,5 @@ linear_model = fitlm(oct_data, force_data);
 final_mean_squared_error = linear_model.MSE;
 
 % save model
-model_path = 'models/linear_model';
+model_path = '../models/linear_model';
 save(model_path, 'linear_model');

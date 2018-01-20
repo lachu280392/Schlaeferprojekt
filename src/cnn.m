@@ -1,5 +1,5 @@
 clear all;
-metal_path= 'preprocessed_data/metal/';
+metal_path= '../preprocessed_data/metal/';
 
 depth = 2 * 50 + 1;
 
@@ -14,8 +14,7 @@ mean_squared_error = [];
 
 % perform leave-one-out cross validation with all metal files
 for file_index = 1:1%numel(metal_files)
-    % decide which files are used for training and validation
-    validation_file = metal_files(file_index)
+    % decide which files are used for training and validation validation_file = metal_files(file_index)
     training_files = metal_files(metal_files~=validation_file);
 
     % force_data for validation
@@ -90,6 +89,6 @@ for file_index = 1:1%numel(metal_files)
     title(validation_file);
 
     % save model
-    model_path = 'models/cnn';
+    model_path = '../models/cnn';
     save(model_path, 'net');
 end

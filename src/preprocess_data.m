@@ -16,7 +16,7 @@ decimation = 1;
 horizontal_slicing = 50;
 
 % Path to data
-data_path = 'data/';
+data_path = '../data/';
 
 % the names of all metal files are derived from the files stored
 metal_files = ls(strcat(data_path, 'metal/forces/'));
@@ -142,7 +142,7 @@ for file_index = 1:numel(files)
 
     %% write into file
     if (write_to_file)
-        preprocessed_data_path = 'preprocessed_data/';
+        preprocessed_data_path = '../preprocessed_data/';
 
         % write force data
         force_path = strcat(preprocessed_data_path, metal_or_phantom, 'forces/', file, '.bin');
