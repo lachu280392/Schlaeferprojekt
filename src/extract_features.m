@@ -12,7 +12,7 @@ function features = extract_features(oct_data)
     depth_at_maximum_intensity = [reference_depth];
     for i = 1:size(oct_data, 2)
         % threshold for candidates of maximal intensity
-        intensity_threshold = 0.85 * oct_sorted(1, i);
+        intensity_threshold = 0.77 * oct_sorted(1, i);
 
         % find intensities that are larger than the threshold
         j = 2;
@@ -24,7 +24,6 @@ function features = extract_features(oct_data)
 
         % initialization with the reference depth makes sure that no depth larger than it is considered
         depth_buffer = [reference_depth];
-
 
         % find the depths of all maximum intensities
         for k = 1:numel(maximum_intensities)
@@ -42,9 +41,6 @@ function features = extract_features(oct_data)
     end
 
     depth_at_maximum_intensity = depth_at_maximum_intensity(2:end);
-
-    % subtract reference depth
-    depth_at_maximum_intensity = depth_at_maximum_intensity - reference_depth;
 
     % fill local outliers by linear interpolation
     depth_at_maximum_intensity = filloutliers(depth_at_maximum_intensity, 'linear', 'movmean', 64);
