@@ -13,8 +13,9 @@ metal_files = erase(metal_files, '.txt');
 mean_squared_error = [];
 
 % perform leave-one-out cross validation with all metal files
-for file_index = 1:1%numel(metal_files)
-    % decide which files are used for training and validation validation_file = metal_files(file_index)
+for file_index = 1:1 %numel(metal_files)
+    % decide which files are used for training and validation 
+    validation_file = metal_files(file_index)
     training_files = metal_files(metal_files~=validation_file);
 
     % force_data for validation
@@ -38,9 +39,23 @@ for file_index = 1:1%numel(metal_files)
         oct_path = strcat(metal_path, 'oct/', training_files(training_files_index));
         oct_file_id = fopen(oct_path);
         oct_buffer = fread(oct_file_id, [depth, Inf], 'float');
-        oct_training = cat(1, oct_training, oct_buffer');
+        size_oct_buffer = size(oct_buffer);
+        oct_buffer_smoothed = zeros(size_oct_buffer(1),size_oct_buffer(2));
+        for j = 1:size_oct_buffer(2)
+            oct_buffer_smoothed(:,j) = smooth(oct_buffer(:,j),5);
+        end
+        for j = 1:size_oct_buffer(1)
+            oct_buffer_smoothed(j,:) = smooth(oct_buffer_smoothed(j,:),5);
+        end
+        oct_training = cat(1, oct_training, oct_buffer_smoothed');
     end
-
+    
+    % input (As an H-by-W-by-C-by-N array)
+    %   H - height of image
+    %   W - width of image
+    %   C - number of channels
+    %   N - number of images
+    
     % inputs need to be 4 dimensional
     oct_buffer = zeros(depth, 1, 1, size(oct_training, 1));
     oct_buffer(:, 1, 1, :) = oct_training';
@@ -50,9 +65,15 @@ for file_index = 1:1%numel(metal_files)
     layers = [
         imageInputLayer([depth, 1, 1])
     
-        convolution2dLayer([3, 1], 1)
+        convolution2dLayer([3, 1], 2)
         reluLayer
         batchNormalizationLayer
+        
+        convolution2dLayer([3,1],4)
+        reluLayer
+        
+        convolution2dLayer([3,1],16)
+        reluLayer
  
         fullyConnectedLayer(1)
         regressionLayer];
@@ -84,11 +105,11 @@ for file_index = 1:1%numel(metal_files)
     figure;
     hold on;
     plot(force_validation);
-    plot(force_prediction);
+    plot(smooth(force_prediction, 10));
     xlim([0, size(force_validation, 1)]);
     title(validation_file);
 
-    % save model
-    model_path = '../models/cnn';
-    save(model_path, 'net');
+%     % save model
+%     model_path = '../models/cnn';
+%     save(model_path, 'net');
 end
