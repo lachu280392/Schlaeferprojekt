@@ -51,9 +51,9 @@ for file_index = 1:numel(files)
     end
     
     % timestamps for start and end of force measurement as well as start of oct measurement (end of oct measurement is calculated)
-    opts = detectImportOptions('timestamps.txt');
+    opts = detectImportOptions('../timestamps.txt');
     opts.DataLine = 2;
-    timestamps = readtable('timestamps.txt', opts);
+    timestamps = readtable('../timestamps.txt', opts);
     
     for i = 1:size(timestamps, 1)
         if strcmp(timestamps.Measurement(i), file)
