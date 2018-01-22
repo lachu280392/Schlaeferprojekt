@@ -3,12 +3,16 @@ metal_path= '../preprocessed_data/metal/';
 
 depth = 2 * 50 + 1;
 
-% all metal files, i. e. the training and validation set
-metal_files = ls(strcat(metal_path, 'forces/'));
-metal_files = metal_files(1:end - 1);
-metal_files = convertCharsToStrings(metal_files);
-metal_files = strsplit(metal_files);
-metal_files = erase(metal_files, '.txt');
+% metal files to use
+l = [7, 8, 9, 10, 11, 12];
+s = [11, 12, 13, 14, 15];
+
+for k = 1:size(l,2)
+    metal_files(k) = string(strcat('metal_linear_', num2str(l(k)), '.bin'));
+end
+for k = 1:size(s,2)
+    metal_files(size(l,2)+k) = string(strcat('metal_stepwise_', num2str(s(k)), '.bin'));
+end
 
 mean_squared_error = [];
 
@@ -30,6 +34,7 @@ for file_index = 1:1 %numel(metal_files)
 
     force_training = [];
     oct_training = [];
+    
     for training_files_index = 1:numel(training_files)
         force_path = strcat(metal_path, 'forces/', training_files(training_files_index));
         force_file_id = fopen(force_path);
@@ -47,7 +52,7 @@ for file_index = 1:1 %numel(metal_files)
         for j = 1:size_oct_buffer(1)
             oct_buffer_smoothed(j,:) = smooth(oct_buffer_smoothed(j,:),5);
         end
-        oct_training = cat(1, oct_training, oct_buffer_smoothed');
+        oct_training = cat(1, oct_training, oct_buffer');
     end
     
     % input (As an H-by-W-by-C-by-N array)
@@ -65,16 +70,13 @@ for file_index = 1:1 %numel(metal_files)
     layers = [
         imageInputLayer([depth, 1, 1])
     
-        convolution2dLayer([3, 1], 2)
+        convolution2dLayer([7, 1], 16)
         reluLayer
         batchNormalizationLayer
         
-        convolution2dLayer([3,1],4)
+        convolution2dLayer([3, 1],16)
         reluLayer
         
-        convolution2dLayer([3,1],16)
-        reluLayer
- 
         fullyConnectedLayer(1)
         regressionLayer];
 
@@ -107,7 +109,7 @@ for file_index = 1:1 %numel(metal_files)
     plot(force_validation);
     plot(smooth(force_prediction, 10));
     xlim([0, size(force_validation, 1)]);
-    title(validation_file);
+    title(validation_file, 'Interpreter', 'none');
 
 %     % save model
 %     model_path = '../models/cnn';
