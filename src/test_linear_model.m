@@ -1,6 +1,7 @@
-function mean_squared_error = test_model(model_name)
+clear all;
+
 % load model
-model_path = strcat('../models/', model_name);
+model_path = strcat('../models/linear_model');
 model = load(model_path);
 model = struct2cell(model);
 model = model{1};
@@ -30,16 +31,11 @@ for file_index = 1:numel(phantoms_files)
     oct_file_id = fopen(oct_path);
     oct_buffer = fread(oct_file_id, [depth, Inf], 'float');
     features_buffer = extract_features(oct_buffer);
-    depth_at_maximum_intensity = features_buffer.depth_at_maximum_intensity';
-
-    %if (contains(model_path, 'cnn'))
-    %    oct_buffer = zeros(depth, 1, 1, size(oct_testing, 1));
-    %    oct_buffer(:, 1, 1, :) = oct_testing';
-    %    oct_testing = oct_buffer;
-    %end
-
+    depth_at_maximum_intensity_testing = (features_buffer.depth_at_maximum_intensity);
+    depth_at_maximum_intensity_testing = depth_at_maximum_intensity_testing - mean(depth_at_maximum_intensity_testing(1:9));
+    depth_at_maximum_intensity_testing = depth_at_maximum_intensity_testing';
     % model evaluation (see https://en.wikipedia.org/wiki/Regression_validation)
-    force_prediction = double(predict(model, depth_at_maximum_intensity));
+    force_prediction = predict(model, depth_at_maximum_intensity_testing);
     mean_squared_error = [mean_squared_error, immse(force_prediction, force_testing)];
 
     % plots
@@ -51,5 +47,5 @@ for file_index = 1:numel(phantoms_files)
     title(testing_file);
 
     figure;
-    plot(depth_at_maximum_intensity);
+    plot(depth_at_maximum_intensity_testing);
 end

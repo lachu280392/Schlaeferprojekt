@@ -33,7 +33,6 @@ for file_index = 1:numel(phantoms_files)
     features_buffer = extract_features(oct_buffer);
     depth_at_maximum_intensity_testing = (features_buffer.depth_at_maximum_intensity);
     depth_at_maximum_intensity_testing = depth_at_maximum_intensity_testing - mean(depth_at_maximum_intensity_testing(1:9));
-    depth_at_maximum_intensity_testing = num2cell(depth_at_maximum_intensity_testing);
 
     % model evaluation (see https://en.wikipedia.org/wiki/Regression_validation)
     force_prediction = net(depth_at_maximum_intensity_testing);
