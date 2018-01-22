@@ -45,7 +45,4 @@ for file_index = 1:numel(phantoms_files)
     plot(force_prediction);
     xlim([0, size(force_testing, 1)]);
     title(testing_file);
-
-    figure;
-    plot(depth_at_maximum_intensity_testing);
 end
