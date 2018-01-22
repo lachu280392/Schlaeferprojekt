@@ -1,6 +1,6 @@
 clear all;
 % preprocessed data is written to files
-write_to_file = false;
+write_to_file = true;
 % preprocessed data is plotted
 plot_data = true;
 
@@ -51,9 +51,10 @@ for file_index = 1:numel(files)
     end
     
     % timestamps for start and end of force measurement as well as start of oct measurement (end of oct measurement is calculated)
-    opts = detectImportOptions('timestamps.txt');
+    file_timestamps = '../timestamps_cnn.txt';
+    opts = detectImportOptions(file_timestamps);
     opts.DataLine = 2;
-    timestamps = readtable('timestamps.txt', opts);
+    timestamps = readtable(file_timestamps, opts);
     
     for i = 1:size(timestamps, 1)
         if strcmp(timestamps.Measurement(i), file)
@@ -120,7 +121,7 @@ for file_index = 1:numel(files)
         oct_data_flip = flipud(oct_data);
         [~, oct_locs_flip] = max(oct_data_flip);
 
-        figure('name', file);
+        h = figure('name', file);
         title(file, 'Interpreter', 'none');
 
         subplot(2,1,1);
@@ -138,6 +139,10 @@ for file_index = 1:numel(files)
         xlabel('Time');
         ylabel('Depth');
         title('OCT');
+        
+        % save as png
+        png_name = strcat('../preprocessed_data/plots/', file, '.png');
+        print(h, '-dpng', png_name);
     end
 
     %% write into file
