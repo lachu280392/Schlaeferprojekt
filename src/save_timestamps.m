@@ -3,28 +3,14 @@
 
 %% Read data
 
-data_path = '../data/metal/';
-disp(strcat('your path is: ', data_path));
-prompt = 'linear or stepwise? [l/s] ';
-type = input(prompt, 's'); 
-if strcmp(type, 'l') == 1
-    type = 'linear';
-elseif  strcmp(type, 's') == 1
-    type = 'stepwise';
-else
-    disp('Please enter l or s'); 
-    return; 
-end
-prompt = 'number: ';
-number = num2str(input(prompt));
-name = strcat('metal_', type, '_', number);
+name = 'train';
 
-force_path = strcat(data_path, 'forces/', name, '.txt');
+force_path = strcat('data/train/', name, '.txt');
+oct_path= strcat('data/train/', name, '.bin');
+
 force_data = dlmread(force_path);
 force_time = force_data(:,1);
 force_data = force_data(:,4);
-
-oct_path = strcat(data_path, 'oct/metal_', type, '_', number, '.bin');
 
 oct_file_id = fopen(oct_path);
 oct_data = fread(oct_file_id, [512, inf], 'float');
@@ -34,7 +20,7 @@ oct_data = fread(oct_file_id, [512, inf], 'float');
 figure;
 subplot(2,1,1);
 plot(force_data);
-title(strcat('metal ', type, ' ', number));
+title(name);
 
 subplot(2,1,2);
 image(oct_data);
