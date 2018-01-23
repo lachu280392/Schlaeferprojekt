@@ -1,87 +1,48 @@
 clear all;
-metal_path= '../preprocessed_data/metal/';
 
-depth = 2 * 50 + 1;
+global metal_path_g height_g input_width_g;
+metal_path_g = '../preprocessed_data/metal/';
+height_g = 2 * 50 + 1;
+input_width_g = 5;
 
-% all metal files, i. e. the training and validation set
-metal_files = ls(strcat(metal_path, 'forces/'));
-metal_files = metal_files(1:end - 1);
-metal_files = convertCharsToStrings(metal_files);
-metal_files = strsplit(metal_files);
-metal_files = erase(metal_files, '.txt');
+% metal files to use
+l = [7, 8, 9, 10, 11, 12];
+s = [11, 12, 13, 14, 15];
+
+for k = 1:size(l,2)
+    metal_files(k) = string(strcat('metal_linear_', num2str(l(k)), '.bin'));
+end
+for k = 1:size(s,2)
+    metal_files(size(l,2)+k) = string(strcat('metal_stepwise_', num2str(s(k)), '.bin'));
+end
 
 mean_squared_error = [];
 
 % perform leave-one-out cross validation with all metal files
 for file_index = 1:1 %numel(metal_files)
+    %% DATA
+    
     % decide which files are used for training and validation 
     validation_file = metal_files(file_index)
     training_files = metal_files(metal_files~=validation_file);
-
-    % force_data for validation
-    force_path = strcat(metal_path, 'forces/', validation_file);
-    force_file_id = fopen(force_path);
-    force_validation = fread(force_file_id, Inf, 'float');
-
-    % oct_data for validation
-    oct_path = strcat(metal_path, 'oct/', validation_file);
-    oct_file_id = fopen(oct_path);
-    oct_validation = fread(oct_file_id, [depth, Inf], 'float')';
-
-    force_training = [];
-    oct_training = [];
-    for training_files_index = 1:numel(training_files)
-        force_path = strcat(metal_path, 'forces/', training_files(training_files_index));
-        force_file_id = fopen(force_path);
-        force_buffer = fread(force_file_id, Inf, 'float');
-        force_training = cat(1, force_training, force_buffer);
-
-        oct_path = strcat(metal_path, 'oct/', training_files(training_files_index));
-        oct_file_id = fopen(oct_path);
-        oct_buffer = fread(oct_file_id, [depth, Inf], 'float');
-        size_oct_buffer = size(oct_buffer);
-        oct_buffer_smoothed = zeros(size_oct_buffer(1),size_oct_buffer(2));
-        for j = 1:size_oct_buffer(2)
-            oct_buffer_smoothed(:,j) = smooth(oct_buffer(:,j),5);
-        end
-        for j = 1:size_oct_buffer(1)
-            oct_buffer_smoothed(j,:) = smooth(oct_buffer_smoothed(j,:),5);
-        end
-        oct_training = cat(1, oct_training, oct_buffer_smoothed');
-    end
     
-    % input (As an H-by-W-by-C-by-N array)
-    %   H - height of image
-    %   W - width of image
-    %   C - number of channels
-    %   N - number of images
-    
-    % inputs need to be 4 dimensional
-    oct_buffer = zeros(depth, 1, 1, size(oct_training, 1));
-    oct_buffer(:, 1, 1, :) = oct_training';
-    oct_training = oct_buffer;
+    [oct_training, force_training, validation_data] = getData(validation_file, training_files);
 
+    %% LAYERS
+    
     % define layers
     layers = [
-        imageInputLayer([depth, 1, 1])
+        imageInputLayer([height_g, input_width_g, 1])
     
-        convolution2dLayer([3, 1], 2)
+        convolution2dLayer([7, 3], 16)
         reluLayer
         batchNormalizationLayer
         
-        convolution2dLayer([3,1],4)
+        convolution2dLayer([3, 1],16)
         reluLayer
         
-        convolution2dLayer([3,1],16)
-        reluLayer
- 
         fullyConnectedLayer(1)
         regressionLayer];
-
-    % define validation data
-    oct_buffer = zeros(depth, 1, 1, size(oct_validation, 1));
-    oct_buffer(:, 1, 1, :) = oct_validation';
-    validation_data = {oct_buffer, force_validation};
 
     % define options
     options = trainingOptions('sgdm', ...
@@ -92,24 +53,109 @@ for file_index = 1:1 %numel(metal_files)
         'Verbose', true, ...
         'Plots', 'training-progress');
 
-    % train network
+    %% TRAIN NETWORK
+    
     net = trainNetwork(oct_training, force_training, layers, options);
-
-    % convert oct_validation to 4 dimensional array and predict force
-    oct_buffer = zeros(depth, 1, 1, size(oct_validation, 1));
-    oct_buffer(:, 1, 1, :) = oct_validation';
-    oct_validation = oct_buffer;
+    
+    %% TEST NETWORK
+    
+    oct_validation = cell2mat(validation_data(1, 1));
+    force_validation = cell2mat(validation_data(1, 2));
+    
     force_prediction = predict(net, oct_validation);
 
-    % plots
+    %% PLOT
+    
     figure;
     hold on;
     plot(force_validation);
     plot(smooth(force_prediction, 10));
     xlim([0, size(force_validation, 1)]);
-    title(validation_file);
+    title(validation_file, 'Interpreter', 'none');
+    
+    %% SAVE MODEL
 
 %     % save model
 %     model_path = '../models/cnn';
 %     save(model_path, 'net');
+end
+
+%% FUNCTION -- getData()
+
+function  [oct_training, force_training, validation_data] = getData(validation_file, training_files)
+    
+    global metal_path_g height_g input_width_g;  
+    
+    force_training = [];
+    oct_training = [];
+
+    % VALIDATION DATA
+    
+    % force_data for validation
+    force_path = strcat(metal_path_g, 'forces/', validation_file);
+    force_file_id = fopen(force_path);
+    force_validation = fread(force_file_id, Inf, 'float');
+
+    % oct_data for validation
+    oct_path = strcat(metal_path_g, 'oct/', validation_file);
+    oct_file_id = fopen(oct_path);
+    oct_validation = fread(oct_file_id, [height_g, Inf], 'float');
+    
+    % define validation data
+    [oct_validation, force_validation] = splitData(oct_validation, force_validation, input_width_g);
+    validation_data = {oct_validation, force_validation};
+    
+    % TRAINING DATA
+    
+    for training_files_index = 1:numel(training_files)
+        
+        % read raw data from files 
+        [oct_buffer, force_buffer] = readData(training_files, training_files_index);
+ 
+        % split the raw data into smaller images with depth
+        [oct_new_data, force_new_data] = splitData(oct_buffer, force_buffer, input_width_g);
+        
+        % concatenate data
+        % [oct_training] = (height_g x input_width_g x 1 x depth)
+        % depth = number of images in direction of time
+        % [force_training] = (1 x depth)
+        oct_training    = cat(4, oct_training, oct_new_data);
+        force_training  = cat(1, force_training, force_new_data);
+        
+    end
+    
+end
+
+%% FUNCTION -- readData()
+% function to read data from files
+
+function [oct_buffer, force_buffer] = readData(training_files, training_files_index)
+
+    global height_g metal_path_g;
+
+    force_path      = strcat(metal_path_g, 'forces/', training_files(training_files_index));
+    force_file_id   = fopen(force_path);
+    force_buffer    = fread(force_file_id, Inf, 'float');
+
+    oct_path        = strcat(metal_path_g, 'oct/', training_files(training_files_index));
+    oct_file_id     = fopen(oct_path);
+    oct_buffer      = fread(oct_file_id, [height_g, Inf], 'float');
+
+end
+
+%%  FUNCTION -- splitData()
+%   function to split raw data into large number of smaller images(height_g x input_width_g) 
+
+function [data4D, force] = splitData(oct, force, input_width_g)
+
+    image_width = size(oct, 2);
+    new_size = image_width - input_width_g + 1;
+    
+    for split_index = 1:new_size
+        input_image = oct(:, split_index:(split_index + input_width_g - 1));
+        data4D(:, :, 1, split_index) = input_image;
+    end
+    
+    force = force(input_width_g:end);
+    
 end
