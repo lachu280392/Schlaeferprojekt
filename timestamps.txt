@@ -10,9 +10,9 @@ p3m2,2714,38741,8191, 1
 p3m3,3387,39254,9818, 1
 metal_linear_2,469,610,5975, 1
 metal_linear_4,587,642,7342, 1
-metal_linear_5,1444,1677,19395, 0
+metal_linear_5,1444,1677,19395, 1
 metal_linear_6,605,731,6657, 1
-metal_linear_7,626,1515,7379, 0
+metal_linear_7,626,1515,7379, 1
 metal_linear_8,437,1122,5158, 1
 metal_linear_9,582,1552,7004, 1
 metal_linear_10,623,1400,7257, 1
@@ -29,8 +29,8 @@ metal_stepwise_6,420,577,5278, 1
 metal_stepwise_7,574,753,6619, 1
 metal_stepwise_9,567,698,6691, 1
 metal_stepwise_10,513,667,6331, 1
-metal_stepwise_11,1241,1725,14410, 1
-metal_stepwise_12,946,1424,11560, 1
+metal_stepwise_11,1241,1635,14410, 1
+metal_stepwise_12,946,1354,11560, 1
 metal_stepwise_13,680,1326,7911, 1
 metal_stepwise_14,1695,2018,20710, 1
 metal_linear_3,446,662,8606, 1
