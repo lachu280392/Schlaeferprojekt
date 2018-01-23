@@ -1,12 +1,15 @@
 clear all;
 
 global metal_path_g height_g input_width_g;
-metal_path_g = '../preprocessed_data/metal/';
+metal_path_g = 'preprocessed_data/metal/';
 height_g = 2 * 50 + 1;
-input_width_g = 5;
+input_width_g = 7;
+%%
 
 % metal files to use
-l = [7, 8, 9, 10, 11, 12];
+% liear     2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
+% stepwise  1, 2, 3, 7, 11, 12, 13, 14, 15
+l = [4, 6, 7, 8, 9, 10, 11, 12];
 s = [11, 12, 13, 14, 15];
 
 for k = 1:size(l,2)
@@ -19,7 +22,7 @@ end
 mean_squared_error = [];
 
 % perform leave-one-out cross validation with all metal files
-for file_index = 1:1 %numel(metal_files)
+for file_index = 1:numel(metal_files)
     %% DATA
     
     % decide which files are used for training and validation 
@@ -38,7 +41,7 @@ for file_index = 1:1 %numel(metal_files)
         reluLayer
         batchNormalizationLayer
         
-        convolution2dLayer([3, 1],16)
+        convolution2dLayer([3, 1], 16)
         reluLayer
         
         fullyConnectedLayer(1)
@@ -63,21 +66,30 @@ for file_index = 1:1 %numel(metal_files)
     force_validation = cell2mat(validation_data(1, 2));
     
     force_prediction = predict(net, oct_validation);
+    
+    mse = immse(force_validation, double(force_prediction));
+
+    store_nets{file_index} = net;
+    store_force_validation{file_index} = force_validation;
+    store_force_prediction{file_index} = force_prediction;
+    store_mse{file_index} = mse;
 
     %% PLOT
     
     figure;
     hold on;
     plot(force_validation);
-    plot(smooth(force_prediction, 10));
+    plot(smooth(force_prediction, 30));
     xlim([0, size(force_validation, 1)]);
-    title(validation_file, 'Interpreter', 'none');
+    name_validation_file = erase(validation_file, '.bin');
+    title(name_validation_file, 'Interpreter', 'none');
     
-    %% SAVE MODEL
+    % SAVE MODEL
+    
+    % save force_prediction in workspace
+%     cnn_force_prediction = strcat('../models/cnn/width_', num2str(input_width_g), '/force_prediction_', name_validation_file)
+%     save(cnn_force_prediction, 'force_prediction', 'force_validation', 'net', 'mse');
 
-%     % save model
-%     model_path = '../models/cnn';
-%     save(model_path, 'net');
 end
 
 %% FUNCTION -- getData()
@@ -146,16 +158,17 @@ end
 %%  FUNCTION -- splitData()
 %   function to split raw data into large number of smaller images(height_g x input_width_g) 
 
-function [data4D, force] = splitData(oct, force, input_width_g)
+function [oct_4D, force] = splitData(oct, force, input_width_g)
 
     image_width = size(oct, 2);
     new_size = image_width - input_width_g + 1;
     
     for split_index = 1:new_size
         input_image = oct(:, split_index:(split_index + input_width_g - 1));
-        data4D(:, :, 1, split_index) = input_image;
+        oct_4D(:, :, 1, split_index) = input_image;
     end
     
     force = force(input_width_g:end);
+    force = force - max(force);
     
 end
