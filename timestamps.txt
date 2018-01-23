@@ -37,3 +37,4 @@ metal_linear_3,446,662,8606, 1
 metal_stepwise_8,527,784,6064, 1
 metal_stepwise_15,650,1261,7465, 1
 metal_linear_3,442,602,8605, 1
+train,2609,30580,14180, 1
