@@ -9,6 +9,7 @@ metal_files = strsplit(metal_files);
 
 for file_index = 1:numel(metal_files)
     file = metal_files(file_index);
+    disp(file);
 
     oct_path = strcat(metal_path, 'oct/', file);
     oct_file_id = fopen(oct_path);
