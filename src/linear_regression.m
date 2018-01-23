@@ -126,7 +126,7 @@ end
 
 % scatter plot
 figure;
-scatter(depth_at_maximum_intensity, force_data, 10, 'filled');
+scatter(depth_at_maximum_intensity, force_data, 2, 'filled');
 
 % linear regression
 linear_model = fitlm(depth_at_maximum_intensity, force_data);
