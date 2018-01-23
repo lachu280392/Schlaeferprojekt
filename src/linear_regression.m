@@ -9,113 +9,32 @@ metal_files = metal_files(1:end - 1);
 metal_files = convertCharsToStrings(metal_files);
 metal_files = strsplit(metal_files);
 
-excluded_files = ["metal_linear_5.bin", "metal_linear_7.bin", "metal_linear_9", "metal_linear_10"];
+
+test_files = ["metal_linear_8.bin", "metal_linear_11.bin", "metal_stepwise_12.bin", "metal_stepwise_14.bin"];
+for file_index = 1:numel(test_files)
+    metal_files = metal_files(metal_files~=test_files(file_index));
+end
+
+excluded_files = ["metal_linear_5.bin", "metal_linear_7.bin", "metal_linear_9.bin", "metal_linear_10.bin"];
 for file_index = 1:numel(excluded_files)
     metal_files = metal_files(metal_files~=excluded_files(file_index));
 end
 
-mse_model = [];
-mse_validation = [];
-mse_smoothed_validation = [];
+training_files = metal_files;
 
-% specify relative size of validation and training set
-validation_set_size = 0.30;
-
-% compute absolute size of validation and training set
-validation_set_size = ceil(validation_set_size * numel(metal_files));
-training_set_size = numel(metal_files) - validation_set_size;
-
-% the number of repeated random sub-sampling validations
-number_of_cross_validations = 1;
-for cross_validation_iteration = 1:number_of_cross_validations
-    disp(cross_validation_iteration);
-
-    % randomly select indices
-    randomized_indices = randperm(numel(metal_files));
-    training_set_indices = randomized_indices(1:training_set_size);
-    validation_set_indices = randomized_indices((training_set_size + 1):end);
-
-    % the corresponding files
-    training_set_files = metal_files(training_set_indices);
-    validation_set_files = metal_files(validation_set_indices);
-
-    % load training set data
-    force_training = [];
-    depth_at_maximum_intensity_training = [];
-    for training_set_index = 1:numel(training_set_files)
-        force_path = strcat(metal_path, 'forces/', training_set_files(training_set_index));
-        force_file_id = fopen(force_path);
-        force_buffer = fread(force_file_id, Inf, 'float');
-        force_buffer = force_buffer - mean(force_buffer(1:9));
-        force_training = cat(1, force_training, force_buffer);
-
-        oct_path = strcat(metal_path, 'oct/', training_set_files(training_set_index));
-        oct_file_id = fopen(oct_path);
-        oct_buffer = fread(oct_file_id, [depth, Inf], 'float');
-        features_buffer = extract_features(oct_buffer);
-        depth_buffer = (features_buffer.depth_at_maximum_intensity)';
-        depth_buffer = depth_buffer - mean(depth_buffer(1:9));
-        depth_at_maximum_intensity_training = cat(1, depth_at_maximum_intensity_training, depth_buffer);
-    end
-
-    % linear regression
-    linear_model = fitlm(depth_at_maximum_intensity_training, force_training);
-
-    % the mse for the training set
-    mse_model = [mse_model, linear_model.MSE];
-
-    for validation_set_index = 1:numel(validation_set_files)
-        % load validation set data
-        validation_file = validation_set_files(validation_set_index);
-
-        force_path = strcat(metal_path, 'forces/', validation_file);
-        force_file_id = fopen(force_path);
-        force_validation = fread(force_file_id, Inf, 'float');
-        force_validation = force_validation - mean(force_validation(1:9));
-
-        oct_path = strcat(metal_path, 'oct/', validation_file);
-        oct_file_id = fopen(oct_path);
-        oct_buffer = fread(oct_file_id, [depth, Inf], 'float');
-        features_buffer = extract_features(oct_buffer);
-        depth_at_maximum_intensity_validation = (features_buffer.depth_at_maximum_intensity)';
-        depth_at_maximum_intensity_validation = depth_at_maximum_intensity_validation - mean(depth_at_maximum_intensity_validation(1:9));
-
-        % predict force
-        force_prediction = predict(linear_model, depth_at_maximum_intensity_validation);
-
-        % smooth force prediction
-        smoothed_force_prediction = smooth(force_prediction, 42);
-
-        % the mse for the validation set
-        mse_validation = [mse_validation, immse(force_prediction, force_validation)];
-
-        % the mse for the smoothed prediction
-        mse_smoothed_validation = [mse_smoothed_validation, immse(smoothed_force_prediction, force_validation)];
-
-        % plots
-        figure;
-        hold on;
-        plot(force_validation);
-        plot(force_prediction);
-        xlim([0, size(force_validation, 1)]);
-        title(strcat('iteration ' , num2str(cross_validation_iteration), ', ', validation_file), 'Interpreter', 'none');
-    end
-
-    % close all files
-    fclose('all');
-end
-
-% train final model with all data
 force_data = [];
 depth_at_maximum_intensity = [];
-for file_index = 1:numel(metal_files)
-    force_path = strcat(metal_path, 'forces/', metal_files(file_index));
+
+for file_index = 1:numel(training_files)
+    file = training_files(file_index);
+
+    force_path = strcat(metal_path, 'forces/', file);
     force_file_id = fopen(force_path);
     force_buffer = fread(force_file_id, Inf, 'float');
     force_buffer = force_buffer - mean(force_buffer(1:9));
     force_data = cat(1, force_data, force_buffer);
 
-    oct_path = strcat(metal_path, 'oct/', metal_files(file_index));
+    oct_path = strcat(metal_path, 'oct/', file);
     oct_file_id = fopen(oct_path);
     oct_buffer = fread(oct_file_id, [depth, Inf], 'float');
     features_buffer = extract_features(oct_buffer);
@@ -123,16 +42,52 @@ for file_index = 1:numel(metal_files)
     depth_buffer = depth_buffer - mean(depth_buffer(1:9));
     depth_at_maximum_intensity = cat(1, depth_at_maximum_intensity, depth_buffer);
 end
-
-% scatter plot
-figure;
-scatter(depth_at_maximum_intensity, force_data, 2, 'filled');
+fclose all;
 
 % linear regression
 linear_model = fitlm(depth_at_maximum_intensity, force_data);
 
-% the mse of the final model
-mse_final_model = linear_model.MSE;
+% scatter plot
+figure;
+hold on;
+scatter(depth_at_maximum_intensity, force_data, 2, 'filled');
+x_limits = xlim;
+predictor = x_limits(1):x_limits(2);
+coefficients = linear_model.Coefficients.Estimate;
+straight_line = coefficients(1) + coefficients(2) * predictor;
+plot(predictor, straight_line);
+
+for file_index = 1:numel(test_files)
+    file = test_files(file_index);
+
+    force_path = strcat(metal_path, 'forces/', file);
+    force_file_id = fopen(force_path);
+    force_data = fread(force_file_id, Inf, 'float');
+    force_data = force_data - mean(force_data(1:9));
+
+    oct_path = strcat(metal_path, 'oct/', file);
+    oct_file_id = fopen(oct_path);
+    oct_buffer = fread(oct_file_id, [depth, Inf], 'float');
+    features_buffer = extract_features(oct_buffer);
+    depth_at_maximum_intensity = (features_buffer.depth_at_maximum_intensity)';
+    depth_at_maximum_intensity = depth_at_maximum_intensity - mean(depth_at_maximum_intensity(1:9));
+
+    force_prediction = predict(linear_model, depth_at_maximum_intensity);
+
+    prediction_error = force_prediction - force_data;
+
+    % root mean squared error
+    root_mean_squared_error = sqrt(mse(prediction_error));
+
+    % plot measured and predicted force
+    figure;
+    hold on;
+    plot(force_data);
+    plot(force_prediction);
+    plot(prediction_error);
+    title(file, 'Interpreter', 'none');
+end
+fclose all;
 
 % save model
 model_path = '../models/linear_model';
