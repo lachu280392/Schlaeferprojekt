@@ -9,6 +9,11 @@ metal_files = metal_files(1:end - 1);
 metal_files = convertCharsToStrings(metal_files);
 metal_files = strsplit(metal_files);
 
+excluded_files = ["metal_linear_5.bin", "metal_linear_7.bin", "metal_linear_9", "metal_linear_10"];
+for file_index = 1:numel(excluded_files)
+    metal_files = metal_files(metal_files~=excluded_files(file_index));
+end
+
 mse_model = [];
 mse_validation = [];
 mse_smoothed_validation = [];
@@ -23,7 +28,7 @@ training_set_size = numel(metal_files) - validation_set_size;
 % the number of repeated random sub-sampling validations
 number_of_cross_validations = 1;
 for cross_validation_iteration = 1:number_of_cross_validations
-    cross_validation_iteration;
+    disp(cross_validation_iteration);
 
     % randomly select indices
     randomized_indices = randperm(numel(metal_files));
@@ -121,7 +126,7 @@ end
 
 % scatter plot
 figure;
-scatter(depth_at_maximum_intensity, force_data, 10, 'filled');
+scatter(depth_at_maximum_intensity, force_data, 2, 'filled');
 
 % linear regression
 linear_model = fitlm(depth_at_maximum_intensity, force_data);

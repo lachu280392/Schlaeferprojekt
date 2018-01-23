@@ -10,10 +10,16 @@ metal_files = convertCharsToStrings(metal_files);
 metal_files = strsplit(metal_files);
 metal_files = erase(metal_files, '.txt');
 
+excluded_files = ["metal_linear_5.bin", "metal_linear_7.bin", "metal_linear_9", "metal_linear_10"];
+for file_index = 1:numel(excluded_files)
+    metal_files = metal_files(metal_files~=excluded_files(file_index));
+end
+
 force_training = [];
 depth_at_maximum_intensity_training = [];
 for file_index = 1:numel(metal_files)
     disp(metal_files(file_index));
+
     % concatenate force data of all metal files
     force_path = strcat(metal_path, 'forces/', metal_files(file_index));
     force_file_id = fopen(force_path);
