@@ -3,14 +3,14 @@ clear all;
 global metal_path_g height_g input_width_g;
 metal_path_g = 'preprocessed_data/metal/';
 height_g = 2 * 50 + 1;
-input_width_g = 7;
+input_width_g = 8;
 %%
 
 % metal files to use
-% liear     2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
-% stepwise  1, 2, 3, 7, 11, 12, 13, 14, 15
-l = [4, 6, 7, 8, 9, 10, 11, 12];
-s = [11, 12, 13, 14, 15];
+% liear     %2, %3, %4, %5, %6, 7, 8, 9, 10, 11, 12, %13
+% stepwise  %1, %2, %3, %7, 11, 12, 13, 14, 15
+l = [7, 9, 10, 12];
+s = [11, 13, 15];
 
 for k = 1:size(l,2)
     metal_files(k) = string(strcat('metal_linear_', num2str(l(k)), '.bin'));
@@ -19,10 +19,12 @@ for k = 1:size(s,2)
     metal_files(size(l,2)+k) = string(strcat('metal_stepwise_', num2str(s(k)), '.bin'));
 end
 
+metal_files = cat(2, metal_files, 'train');
+
 mean_squared_error = [];
 
 % perform leave-one-out cross validation with all metal files
-for file_index = 1:numel(metal_files)
+%for file_index = 1:numel(metal_files)
     %% DATA
     
     % decide which files are used for training and validation 

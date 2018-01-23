@@ -1,18 +1,26 @@
-%% TEST DATA
+%% TEST NETWORK
 
 clear all;
 
 global height_g input_width_g;
 height_g = 2 * 50 + 1;
 
-% LOAD
+% LOAD DATA
 
-load('models/cnn/width_7/force_prediction_metal_linear_8.mat')
+load('cnn.mat')
 input_width_g = net.Layers(1,1).InputSize(1,2);
 
-oct_test_data_path = 'preprocessed_data/phantoms/oct/p1m1.bin';
+data_path = 'preprocessed_data/';
+material_file = 'metal/';
+name = 'val.bin';
+
+oct_test_data_path = strcat(data_path, material_file, 'oct/', name)
 oct_fille_id = fopen(oct_test_data_path);
 oct_data = fread(oct_fille_id, [height_g, Inf], 'float');
+
+image(oct_data);
+
+return;
 
 force_test_data_path = 'preprocessed_data/phantoms/forces/p1m2.bin';
 force_file_id = fopen(force_test_data_path);

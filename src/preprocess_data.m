@@ -1,6 +1,6 @@
 clear all;
 % preprocessed data is written to files
-write_to_file = false;
+write_to_file = true;
 % preprocessed data is plotted
 plot_data = true;
 
@@ -16,23 +16,12 @@ decimation = 1;
 horizontal_slicing = 50;
 
 % Path to data
-data_path = '../data/';
+data_path = 'data/train/';
 
-% the names of all metal files are derived from the files stored
-metal_files = ls(strcat(data_path, 'metal/forces/'));
-metal_files = metal_files(1:end - 1);
-metal_files = convertCharsToStrings(metal_files);
-metal_files = strsplit(metal_files);
-
-% the names of all phantom files are derived from the files stored
-phantoms_files = ls(strcat(data_path, 'phantoms/forces/'));
-phantoms_files = phantoms_files(1:end - 1);
-phantoms_files = convertCharsToStrings(phantoms_files);
-phantoms_files = strsplit(phantoms_files);
-
-% files are combined and remove filename extension
-files = [metal_files, phantoms_files];
-files = erase(files, '.txt');
+files  = "train";
+force_path = strcat(data_path, files, '.txt');
+oct_path = strcat(data_path, files, '.bin');
+oct_time_path = strcat(data_path, files, '__timestamp.txt');
 
 %%
 for file_index = 1:numel(files)
@@ -40,20 +29,24 @@ for file_index = 1:numel(files)
     file = files(file_index);
 
     % choose proper directory for current file
-    if (contains(file, 'metal'))
-        metal_or_phantom = 'metal/';
-        force_sampling_frequency = force_sampling_frequency_metal;
-        smoothing_parameter = 5;
-    else
-        metal_or_phantom = 'phantoms/';
-        force_sampling_frequency = force_sampling_frequency_phantoms;
-        smoothing_parameter = 50;
-    end
+    metal_or_phantom = 'metal/';
+    force_sampling_frequency = force_sampling_frequency_metal;
+    smoothing_parameter = 5;
     
     % timestamps for start and end of force measurement as well as start of oct measurement (end of oct measurement is calculated)
-    opts = detectImportOptions('../timestamps.txt');
+    opts = detectImportOptions('timestamps.txt');
     opts.DataLine = 2;
-    timestamps = readtable('../timestamps.txt', opts);
+    timestamps = readtable('timestamps.txt', opts);
+    
+    % read force data
+    force_data = dlmread(force_path);
+    force_time = force_data(:, 1);
+    force_data = force_data(:, 4);
+
+    % read oct data
+    oct_file_id = fopen(oct_path);
+    oct_data = fread(oct_file_id, [512, Inf], 'float');
+    oct_time = dlmread(oct_time_path);
     
     for i = 1:size(timestamps, 1)
         if strcmp(timestamps.Measurement(i), file)
@@ -64,8 +57,13 @@ for file_index = 1:numel(files)
             end
             force_start = timestamps.force_start(i);
             force_end = timestamps.force_end(i);
+            force_number_of_samples = force_end - force_start + 1;
+            force_sampling_frequency = 10^6 * size(force_time, 1) / (force_time(end) - force_time(1));
+            
             oct_start = timestamps.oct_start(i);
-            oct_end = round(oct_start + (oct_sampling_frequency / force_sampling_frequency * (force_end - force_start)));
+            oct_sampling_frequency = 100 * size(oct_time, 1) / (oct_time(end) - oct_time(1));
+            oct_number_of_samples = round(force_number_of_samples * oct_sampling_frequency / force_sampling_frequency);
+            oct_end = oct_start + oct_number_of_samples;
         end
     end
     
@@ -77,19 +75,6 @@ for file_index = 1:numel(files)
     else
         disp(file);
     end
-
-    % read force data
-    force_path = strcat(data_path, metal_or_phantom, 'forces/', file, '.txt');
-    force_data = dlmread(force_path);
-    force_time = force_data(:, 1);
-    force_data = force_data(:, 4);
-
-    % read oct data
-    oct_path = strcat(data_path, metal_or_phantom, 'oct/', file, '.bin');
-    oct_file_id = fopen(oct_path);
-    oct_data = fread(oct_file_id, [512, Inf], 'float');
-    oct_time_path = strcat(data_path, metal_or_phantom, 'oct/', file, '_timestamp.txt');
-    oct_time = dlmread(oct_time_path);
 
     % remove offset
     force_data = force_data(force_start:force_end);
@@ -142,16 +127,16 @@ for file_index = 1:numel(files)
 
     %% write into file
     if (write_to_file)
-        preprocessed_data_path = '../preprocessed_data/';
+        preprocessed_data_path = 'preprocessed_data/train/';
 
         % write force data
-        force_path = strcat(preprocessed_data_path, metal_or_phantom, 'forces/', file, '.bin');
+        force_path = strcat(preprocessed_data_path, 'forces/', files ,'.bin');
         force_file_id = fopen((force_path), 'w');
         fwrite(force_file_id, force_data, 'float');
         fclose(force_file_id);
 
         % write oct data
-        oct_path = strcat(preprocessed_data_path, metal_or_phantom, 'oct/', file, '.bin');
+        oct_path = strcat(preprocessed_data_path, 'oct/', files, '.bin');
         oct_file_id = fopen((oct_path), 'w');
         fwrite(oct_file_id, oct_data, 'float');
         fclose(oct_file_id);
