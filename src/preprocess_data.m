@@ -16,12 +16,12 @@ decimation = 1;
 horizontal_slicing = 50;
 
 % Path to data
-data_path = 'data/train/';
+data_path = 'data/metal/oct/';
 
-files  = "train";
+files  = "val";
 force_path = strcat(data_path, files, '.txt');
-oct_path = strcat(data_path, files, '.bin');
-oct_time_path = strcat(data_path, files, '__timestamp.txt');
+% oct_path = strcat(data_path, files, '.bin');
+% oct_time_path = strcat(data_path, files, '__timestamp.txt');
 
 %%
 for file_index = 1:numel(files)
