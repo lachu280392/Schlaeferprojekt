@@ -4,8 +4,9 @@ Install latexmk
 
 run 
 
-$latexmk -pdf
-$latexmk -c 	// removes unnecessary files
+`$latexmk -pdf`
+
+`$latexmk -c` 	// removes unnecessary files
 
 finish.
 
