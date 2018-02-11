@@ -1,5 +1,6 @@
 %%% This is the template Gessert has send us.     %%%
-%%% Look at it for further explanation and tips. %%%
+%%% Look at it for further explanation and tips.  %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \documentclass[runningheads,a4paper]{llncs}
 
@@ -12,6 +13,7 @@
 \newcommand{\keywords}[1]{\par\addvspace\baselineskip
 \noindent\keywordname\enspace\ignorespaces#1}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
 
 \mainmatter  % start of an individual contribution
@@ -47,32 +49,48 @@ and recursive neural network are considered.
 \keywords{Machine learning, linear regression, CNN, RNN, optical coherence tomography}
 \end{abstract}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%     Section - Introduction                    %%%	
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}\label{sec:intro}
+\input{content/introduction.tex}
 
-\section{Introduction}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%     Section - Measurement Set Up              %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Measurement Set Up}\label{sec:msu}
+\input{content/measurementSetUp.tex}
 
-
-\section{Measurement Set Up}
-
-
-\section{Theory}
-
-Not sure if necessary. (Hopefully not?)
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%     Section - Models                          %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Models}
 
-\subsection{Linear Regression}
+% ToDo Introduction to models
 
-@Felix Wege
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%     Subsection - Linear Regression @Felix     %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Linear Resgression}\label{sub:linReg}
+\input{content/linearRegression.tex}
 
-\subsection{CNN}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%     Subsection - CNN @Yuria                   %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{CNN}\label{sub:cnn}
+\input{content/CNN.tex}
 
-@Yuria Konda
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%     Subsection - RNN @Lakshamanan             %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{RNN}\label{sub:rnn}
+\input{content/RNN.tex}
 
-\subsection{RNN}
-
-@Lakshamanam
-
-\section{Results}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%     Section - Results                         %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Results}\label{sec:results}
+\input{content/results.tex}
 
 
 %%% BIBLIOGRAPHY %%%
