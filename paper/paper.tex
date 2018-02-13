@@ -1,0 +1,102 @@
+%%% This is the template Gessert has send us.     %%%
+%%% Look at it for further explanation and tips.  %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[runningheads,a4paper]{llncs}
+
+\usepackage{amssymb}
+\setcounter{tocdepth}{3}
+\usepackage{graphicx}
+
+\usepackage{url}
+\urldef{\mailsa}\path|{felix.wege, yuria.konda, lakshamanan.chockalingam}@tuhh.de|    
+\newcommand{\keywords}[1]{\par\addvspace\baselineskip
+\noindent\keywordname\enspace\ignorespaces#1}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+\mainmatter  % start of an individual contribution
+
+% first the title is needed
+\title{Force Prediction using OCT Sensor Data 
+by Linear Regression, CNN and RNN}
+
+\author{Felix Wege \and Yuria Konda \and Lakshamanan Chockalingam}
+
+\authorrunning{Force Estimation using OCT Sensor Data}
+% (feature abused for this document to repeat the title also on left hand pages)
+
+\institute{Intelligent Systems in Medicine, Institute of Medical Technology,\\
+Am Schwarzenberg-Campus 3, 21073 Hamburg\\
+\mailsa\\
+}
+
+\maketitle
+
+
+\begin{abstract}
+Content of this student project is to develop a model that gives 
+information about the force acting at a needle tip while plunging it against 
+a tissue.
+The purpose is to give the operator some kind of force feedback
+without measuring it explicitly.
+Input of this model is an optical coherence tomography (OCT) signal
+that is measured at the needle tip.
+Three models which are linear regression, convotional neural network
+and recursive neural network are considered.
+
+\keywords{Machine learning, linear regression, CNN, RNN, optical coherence tomography}
+\end{abstract}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%     Section - Introduction                    %%%	
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}\label{sec:intro}
+\input{content/introduction.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%     Section - Measurement Set Up              %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Measurement Set Up}\label{sec:msu}
+\input{content/measurementSetUp.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%     Section - Models                          %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Models}
+
+% ToDo Introduction to models
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%     Subsection - Linear Regression @Felix     %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Linear Resgression}\label{sub:linReg}
+\input{content/linearRegression.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%     Subsection - CNN @Yuria                   %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{CNN}\label{sub:cnn}
+\input{content/CNN.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%     Subsection - RNN @Lakshamanan             %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{RNN}\label{sub:rnn}
+\input{content/RNN.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%     Section - Results                         %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Results}\label{sec:results}
+\input{content/results.tex}
+
+
+%%% BIBLIOGRAPHY %%%
+\begin{thebibliography}{4}
+
+
+\end{thebibliography}
+
+\end{document}
