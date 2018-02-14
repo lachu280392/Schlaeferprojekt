@@ -11,14 +11,13 @@
     * Force sensor too large for needle tip. 
 * What sensors/data do we have?
     * OCT data 
-    * Force sensor at end of needle as ground truth data for training.
 * What is OCT? Why do we use it?
     * medical usage for imaging using backreflection of coherent light
     * 1-3mm deep into surface of scattering medium
 
 ## Data Acquisition
 
-* We want to investigate different approaches to build a model for force extimation.
+* We want to investigate different approaches to build a model for force estimation.
 * What data do we have? (As explained in introduction, we want to use OCT data of needle. However 
 we need some ground truth data (for supervised learning and optimazation)
 
@@ -27,6 +26,7 @@ we need some ground truth data (for supervised learning and optimazation)
 * Tissues (Gelatine)
     * simulate biological tissue
 * Measurement 
+    * Force sensor at end of needle as ground truth data for training
     * Set up (Picture)
         * Poke against metal plate (Measures force only acting
         * Poke into gelatine

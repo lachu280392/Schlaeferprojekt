@@ -1,10 +1,19 @@
 % INTRODUCTION % 
 
-%\section{Introduction}\label{sec:introduction}
+%\section{Introduction}\label{sec:intro}
 
-In medical approaches OCT scans are used to image the uppermost layer of biological tissues non-invasively.
-For the purpose of being able to investigate internal aeras of the body with this technique, researchers have developed 
-OCT needles. 
+In medical approaches OCT scans are used to image the uppermost layer of biological tissues non-invasive.
+For the purpose of being able to investigate internal areas of the body with this technique, researchers have developed 
+OCT needles. By that, inner organs can be scanned directly and for example, tumors can be classified as malignant or not.
 One main reason for this attempt was that large surgical interventions can be avoided in many cases what 
-results in smaller physical damages and faster healing proesses of the patients.
+results in smaller physical damages and faster healing processes of the patients.
+However a large disadvantage of this procedure is that no feedback for the acting force of the needle is given.
+This can lead to complications and injuries in surgical treatments and makes the handling unintuitive for the operator.
+To address this problem, force needs to be measured in some way without expanding the clinical set up spatially and financially.
+Both aspects oppose the attachment of a force sensor directly on the tip of the needle and a force sensor somewhere 
+outside the treated area tends to measure additional lateral forces of the environment. (Stick slip effect)
+By estimating the force with OCT scans, no further equipment is required and data is already accessible.
+
+Therefore, in this paper three different models are developed to output a force estimation based on the oct data.
+These consists of a linear regression model, a convolutional neural network and a recursive neural network.
 
