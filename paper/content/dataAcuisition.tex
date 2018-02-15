@@ -4,12 +4,32 @@
 
 As stated in the introduction \ref{sec:intro}, models are build to estimate the force at the needle tip 
 using the OCT data as input.
-For optimization and supervised learning, ground truth data are necessary. For this, a force sensor is 
+
+\subsection{Data}
+To gather ground thruth data for modelling and supervised learning, a force sensor is 
 integrated into the OCT system by placing it at the end of the needle.
 
 *PICTURE*
 
-Data is collected by moving the needle forward to poke against a metal plate continuously monitored.
-The transparent tip part of the needle deforms what leads to a faster reflection of the light in the OCT sensor and thus
-changes the depth of the maximal reflection.
-This set up only measures frontal forces and calibrates the system ue to the stiff 
+Data is collected by poking the needle against a metal plate back and forth in linear or stepwise motions.
+The OCT sensor detects the deformation of the transparent material at the tip of the needle that leads to a faster reflection of the light and thus
+changes the depth of the maximal reflection in the B-scan.
+By this, only frontal forces without any ditributing factors are measured.
+The transparent material of the OCT needle deforms up to 0.35mm and one A-scan is represented by 512 pixels.
+The acting forces are up to ...(???) Newton by only considering the force in needle direction. (z direction)
+
+\begin{figure}
+\centering
+\includegraphics[scale=.7]{/figures/
+* PICTURES OF BOTH DATA*
+
+\subsection{Preprocessing}
+
+In oder to make use of both data sources, force sensor data is interpolated to obtain the same sampling frequency and start
+and end points are synchronized.
+The size of the OCT image is reduced to 50 pixels above and below the mean position of the maximum intensities due to
+computational reasons. Consequently, the reflection of the repetitive light is neglected.
+
+\subsection{Freature extraction}
+
+
