@@ -1,3 +1,17 @@
 % CNN %
 
 %\subsection{CNN}\label{sub:cnn}
+
+We set up a convolutional neural network with the preprocessed oct image as input image.
+The main idea is, that force acts continuously and therefore depends on the past.
+By considering several A-scans for force estimation at one timestamp, outliers are weakened and local connectivity between actual
+measurement data and past data is created.
+
+    \textit{Architecture} The image size of the oct is defined by the number of A-scans, whereby one A-scan contains data of 101 pixels.
+To obtain a desired input image size $HxW$ for the model, the whole B-scan $HxW'$ is splitted.
+Thus, a dimension of $D = W' - W - 1$ of the input image arises.
+The architecture of our CNN is adapted to ~paper gel force estimation~.
+As represented in figure ~figure~, we use four convolutional layers, all followed by ReLu layers and 2x2 max pooling layers with a stride of two. 
+C1, C2 and C3 with a filter size of 3 x 3 and a stride of one.
+
+
