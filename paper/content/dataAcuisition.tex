@@ -27,12 +27,15 @@ The acting forces are up to ...(???) Newton by only considering the force in nee
 
 \subsection{Preprocessing}
 
-In oder to make use of both data sources, force sensor data is interpolated to obtain the same sampling frequency and start
-and end points are synchronized.
+The measurements setup did not contain any mechanism for synchronization between the data; the synchronization was part of the preprocessin.
+In addition to determining the start and end points of both the raw OCT and force data the sampling frequencies had to be matched.
+The force data was interpolated to ensure that the data contained the same number of samples, i. e. there is a force datum for each depth scan.
 The size of the OCT image is reduced to 50 pixels above and below the mean position of the maximum intensities due to
 computational reasons. Consequently, the reflection of the repetitive light is neglected.
+The force sensor was highly noise sensitive.
+Therefore, a low-pass filter was used to smooth the measurements.
 
-\subsection{Feature Extraction}
+\subsection{Feature Extraction}\label{subsec:feature_extraction}
 
 By comparison of the preprocessed OCT depth scans and the low-pass filtered force data it is evident that there is a relationship between the depth at the maximum intensity and the force at each point in time.
 Thus, the depth at which the OCT intenity is at its maximum was used as a predictor in the models.
