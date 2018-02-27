@@ -6,34 +6,40 @@ As stated in the introduction \ref{sec:intro}, models are build to estimate the 
 using the OCT data as input.
 
 \subsection{Data}
-To gather ground thruth data for modelling and supervised learning, a force sensor is 
-integrated into the OCT system by placing it at the end of the needle.
+
+To gather ground thruth data for modelling and supervised learning a force sensor is integrated into the OCT system by placing it at the tip of the needle.
 
 *PICTURE*
 
 Data is collected by poking the needle against a metal plate back and forth in linear or stepwise motions.
 The OCT sensor detects the deformation of the transparent material at the tip of the needle that leads to a faster reflection of the light and thus
 changes the depth of the maximal reflection in the B-scan.
-By this, only frontal forces without any ditributing factors are measured.
+Therefore, only frontal forces without any ditributing factors are measured.
 The transparent material of the OCT needle deforms up to 0.35mm and one A-scan is represented by 512 pixels.
 The acting forces are up to ...(???) Newton by only considering the force in needle direction. (z direction)
 
-\begin{figure}
-    \centering
-    \includegraphics[width=0.8\textwidth]{force_and_oct}
-    \caption{asdf}
-    \label{fig:force_and_oct}
-\end{figure}
+In total we measured data for poking against the metal plate 29 times and 9 times for poking against gelatin phantoms.
+The type of motion as well as the amount of needle displacemet was varied.
 
 \subsection{Preprocessing}
 
-The measurements setup did not contain any mechanism for synchronization between the data; the synchronization was part of the preprocessin.
+The measurement setup did not contain any mechanism for synchronization between the data; the synchronization was part of the preprocessin.
 In addition to determining the start and end points of both the raw OCT and force data the sampling frequencies had to be matched.
 The force data was interpolated to ensure that the data contained the same number of samples, i. e. there is a force datum for each depth scan.
 The size of the OCT image is reduced to 50 pixels above and below the mean position of the maximum intensities due to
-computational reasons. Consequently, the reflection of the repetitive light is neglected.
+computational reasons.
+Consequently, the reflection of the repetitive light is neglected.
+\cref{fig:features_metal} illustrates the reduced depth.
 The force sensor was highly noise sensitive.
 Therefore, a low-pass filter was used to smooth the measurements.
+An example of synchronized and truncated data is shown in \cref{fig:force_and_oct}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.75\textwidth]{force_and_oct}
+    \caption{Preprocessed metal data showing both the force and the OCT scan.}
+    \label{fig:force_and_oct}
+\end{figure}
 
 \subsection{Feature Extraction}\label{subsec:feature_extraction}
 
@@ -46,11 +52,18 @@ For each point in time only pixels with an intensity larger than a threshold val
 Pixels at a lower depth were given a preference.
 Hence, the constant stripe visible in \cref{fig:force_and_oct} was avoided.
 Additionally, an outlier replacement based on the moving mean of the previous depth was performed.
-An exemplary feature extraction is depicted in \cref{fig:features_metal}.
+An exemplary feature extraction for data from poking against the metal plate and poking against gelatin are depicted in \cref{fig:features_metal} and \cref{fig:features_phantom}, respectively.
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.8\textwidth]{features_metal}
-    \caption{asdf}
+    \includegraphics[width=0.75\textwidth]{features_metal}
+    \caption{Preprocessed metal depth scan. The detected depth at the maximum intensity is shown as a red line.}
     \label{fig:features_metal}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.75\textwidth]{features_phantom}
+    \caption{Preprocessed phantom depth scan. The detected depth at the maximum intensity is shown as a red line.}
+    \label{fig:features_phantom}
 \end{figure}
