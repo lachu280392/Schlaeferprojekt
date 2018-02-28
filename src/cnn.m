@@ -3,7 +3,7 @@ clear all;
 global metal_path_g height_g input_width_g;
 metal_path_g = 'preprocessed_data/metal/';
 height_g = 2 * 50 + 1;
-input_width_g = 7;
+input_width_g = 6;
 %%
 
 % metal files to use
@@ -37,14 +37,12 @@ for file_index = 1:numel(metal_files)
     layers = [
         imageInputLayer([height_g, input_width_g, 1])
     
-        convolution2dLayer([7, 3], 16)
+        convolution2dLayer([3, 6], 16, 'Padding', 'same')
         reluLayer
-        batchNormalizationLayer
-        
-        convolution2dLayer([3, 1], 16)
-        reluLayer
-        
+        maxPooling2dLayer(2, 'Stride', 2)
+ 
         fullyConnectedLayer(1)
+        
         regressionLayer];
 
     % define options
